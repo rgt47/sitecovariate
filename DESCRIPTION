@@ -1,0 +1,14 @@
+Package: sitecovariate
+Title: Site as a Covariate in Clinical Trial Analysis Models
+Version: 0.0.0.9000
+Authors@R:
+    person("Ronald G.", "Thomas", email = "rthomas@ucsd.edu", role = c("aut", "cre"))
+Description: Investigation of whether and how site should be included as a covariate in clinical trial analysis models.
+License: GPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Imports:
+    renv,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

@@ -1,0 +1,123 @@
+---
+title: "Should site be a covariate in the analysis model? (a9)"
+author: "R.G. Thomas"
+date: "`r Sys.Date()`"
+geometry: "left=3cm,right=3in,top=2cm,bottom=2cm"
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+    highlight: tango
+    keep_tex: true 
+header-includes:
+   - \usepackage{xcolor, graphicx, verbatim, fancyvrb, colortbl,
+     longtable, caption, float}
+   - \usepackage{lipsum, xargs}
+   - \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+   - \usepackage[export]{adjustbox}
+bibliography: /Users/zenn/p/library.bib
+latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+options(dplyr.print_max = 1e9)
+library(pacman)
+p_load(tibble, broom, snakecase, tidyr, data.table,colorout, conflicted,
+       purrr,ztable, hrbrthemes,readr, dplyr, magrittr, pipecleaner,
+       lubridate, zoo, mi, survival, ggplot2, printr,
+       lsmeans, ggthemes,  knitr, xtable, doBy, nlme,
+       reshape2,  pander, pwr, tufte)
+
+opts_chunk$set(warning = F, message = F, echo=F, fig.width=3.2,
+	       fig.height=3,  results='asis', dev='pdf',
+	       opts_chunk$set(cache.path = "cache/"))
+source('~/projects/reports/templates/zz.tools.R')
+options(scipen = 1, digits = 2)
+options(ztable.type="latex")
+```
+
+# Introduction
+\lipsum[2]
+\todo[inline, color=cyan]{The original todo note withouth changed colours.\newline Here's another line.}
+\lipsum[2]
+
+Sample reference section reference. @Pocock1975a
+
+# Methods
+
+# Results
+My most common usage of the todonotes package, is to insert an uncustomized
+todonotes somewhere in a latex document. An example of this usage is the command
+\todo{Make a cake \ldots},
+\lipsum[1]
+\todo[color=green]{Make a pie \ldots},
+\lipsum[1] 
+\todo{Make a joke \ldots},
+\listoftodos
+
+# References
+
+
+# Introduction
+
+A key question in the analysis of data sets from multi-site randomized clinical trials is 
+whether to include site as a covariate in the model. 
+
+Associated questions are: 
+
+* if included, should site by treatment interaction be included? 
+
+* should site be included as a fixed or a random effect?
+
+* is site as a stratification factor relevant to the decision? 
+
+* what is the experience in NEJM, JAMA, and Lancet over the last 5 years?
+
+A review of the literature follows: 
+
+From the clinical trials literature 
+
+* Pros of including is explaining variance
+
+* Con: a significant site by treatment interaction requires explaination
+
+* Con: Including site or site x treatment costs in terms of degrees of freedom. this means 
+impact on mean square error (?) (what is the
+relative cost of site (say 30 sites) as a  fixed or random effect in
+terms of degrees of freedom. Are there other differences, say, in
+changes to other parameters in the model?)
+
+what impact does heterogeniety of site size (num of subjects) have on analysis? 
+
+
+reference @Kahan2013.  
+
+and @Localio2001a
+
+
+Given X important predictors, what is the likelihood of imbalance
+if Y (<X) factors are included the stratifcation.
+
+
+# Methods
+
+```{r}
+#the following function can be found at: https://stats.idre.ucla.edu/r/examples/alda/r-applied-longitudinal-data-analysis-ch-7/
+#
+#corandcov  function(glsob,cov=T,...){
+#  corm  corMatrix(glsob$modelStruct$corStruct)[[5]]
+#  print(corm)
+#  varstruct  print(glsob$modelStruct$varStruct)  
+#  varests  coef(varstruct, uncons=F, allCoef=T)
+#  covm  corm*glsob$sigma^2*t(t(varests))%*%t(varests)
+#  return(covm)
+#  }
+#
+foo = read.table("https://stats.idre.ucla.edu/stat/r/examples/alda/data/opposites_pp.txt",header=TRUE,sep=",")
+```
+
+# Results
+
+# References
+
+
