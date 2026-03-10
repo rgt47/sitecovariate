@@ -1,39 +1,48 @@
 ---
-title: "Should site be a covariate in the analysis model? (a9)"
+title: "Should site be a covariate in the analysis model?"
 author: "R.G. Thomas"
 date: "`r Sys.Date()`"
-geometry: "left=3cm,right=3in,top=2cm,bottom=2cm"
+fontsize: 11pt
+geometry: "left=3cm,right=5cm,top=2cm,bottom=2cm"
 output:
   pdf_document:
+    latex_engine: xelatex
     toc: true
     number_sections: true
     highlight: tango
-    keep_tex: true 
+    keep_tex: true
 header-includes:
-   - \usepackage{xcolor, graphicx, verbatim, fancyvrb, colortbl,
-     longtable, caption, float}
-   - \usepackage{lipsum, xargs}
-   - \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
-   - \usepackage[export]{adjustbox}
-bibliography: /Users/zenn/p/library.bib
-latex_engine: xelatex
+  - \usepackage{xcolor, graphicx, verbatim, fancyvrb, colortbl,
+    longtable, caption, float}
+  - \usepackage{lipsum, xargs}
+  - \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+  - \usepackage[export]{adjustbox}
+bibliography: references.bib
+link-citations: true
 ---
 
 ```{r setup, include=FALSE}
 options(dplyr.print_max = 1e9)
-library(pacman)
-p_load(tibble, broom, snakecase, tidyr, data.table,colorout, conflicted,
-       purrr,ztable, hrbrthemes,readr, dplyr, magrittr, pipecleaner,
-       lubridate, zoo, mi, survival, ggplot2, printr,
-       lsmeans, ggthemes,  knitr, xtable, doBy, nlme,
-       reshape2,  pander, pwr, tufte)
+library(tibble)
+library(broom)
+library(tidyr)
+library(purrr)
+library(readr)
+library(dplyr)
+library(lubridate)
+library(survival)
+library(ggplot2)
+library(knitr)
+library(nlme)
+library(kableExtra)
 
-opts_chunk$set(warning = F, message = F, echo=F, fig.width=3.2,
-	       fig.height=3,  results='asis', dev='pdf',
-	       opts_chunk$set(cache.path = "cache/"))
-source('~/projects/reports/templates/zz.tools.R')
+opts_chunk$set(
+  warning = FALSE, message = FALSE, echo = FALSE,
+  fig.width = 3.2, fig.height = 3,
+  results = "asis", dev = "pdf",
+  cache.path = "cache/"
+)
 options(scipen = 1, digits = 2)
-options(ztable.type="latex")
 ```
 
 # Introduction
