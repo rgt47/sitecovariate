@@ -1,7 +1,7 @@
 ---
 title: "Should site be a covariate in the analysis model?"
 author: "R.G. Thomas"
-date: "`r Sys.Date()`"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
 fontsize: 11pt
 geometry: "left=3cm,right=5cm,top=2cm,bottom=2cm"
 output:
@@ -18,6 +18,7 @@ header-includes:
   - \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
   - \usepackage[export]{adjustbox}
 bibliography: references.bib
+csl: statistics-in-medicine.csl
 link-citations: true
 ---
 
