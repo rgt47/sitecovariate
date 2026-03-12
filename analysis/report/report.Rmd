@@ -36,98 +36,629 @@ library(ggplot2)
 library(knitr)
 library(nlme)
 library(kableExtra)
+library(lme4)
 
 opts_chunk$set(
   warning = FALSE, message = FALSE, echo = FALSE,
-  fig.width = 3.2, fig.height = 3,
+  fig.width = 5.5, fig.height = 4,
   results = "asis", dev = "pdf",
   cache.path = "cache/"
 )
-options(scipen = 1, digits = 2)
+options(scipen = 1, digits = 3)
+
+source("../scripts/sim_site_covariate.R")
 ```
 
 # Introduction
-\lipsum[2]
-\todo[inline, color=cyan]{The original todo note withouth changed colours.\newline Here's another line.}
-\lipsum[2]
 
-Sample reference section reference. @Pocock1975a
+A key question in the analysis of data from multi-site randomized
+clinical trials is whether and how to include site (or centre) as
+a covariate in the analysis model. The question is not merely
+academic: the choice of whether to adjust for site, and whether
+to treat it as a fixed or random effect, can influence estimates
+of treatment effect, standard errors, confidence interval width,
+and statistical power
+[@Localio2001adjustments; @Kahan2013continuous].
+
+Multicenter trials are conducted to increase enrollment rates
+and improve the generalizability of findings across clinical
+settings. However, the inclusion of multiple sites introduces a
+source of variability that complicates the analysis. Patients
+within a site tend to be more similar to one another than to
+patients at other sites, owing to shared clinical practices,
+patient populations, and local standards of care. This
+within-site correlation, or clustering, violates the independence
+assumption underlying many standard statistical methods
+[@Localio2001adjustments].
+
+## Regulatory context
+
+Both international and national regulatory bodies have addressed
+the role of covariates, including site, in the analysis of
+clinical trials. The ICH E9 guideline states that 'factors on
+which randomisation has been stratified should be accounted for
+later in the analysis' [@ICHE9guideline]. When randomization is
+stratified by site, this implies that site should appear in the
+analysis model. The United States Food and Drug Administration
+(FDA) 2023 guidance on covariate adjustment reinforces this
+position, recommending that stratification variables be included
+in the primary analysis model [@FDA2023covariate]. The European
+Medicines Agency (EMA) similarly advises that stratification
+factors be incorporated unless stratification was performed for
+purely administrative reasons [@EMA2015covariate].
+
+## The case for adjusting for site
+
+The primary statistical argument for including site in the
+analysis model is that it can reduce residual variance, thereby
+increasing the precision of treatment effect estimates and
+improving power [@Kahan2014rewards]. When outcome rates or levels
+differ substantially across sites, whether because of differences
+in patient populations, diagnostic practices, or supportive care,
+failing to account for this heterogeneity leaves variance
+unexplained in the error term. Adjustment for site absorbs this
+between-site variability and can yield narrower confidence
+intervals for the treatment effect [@Kahan2013continuous;
+@edgarIncludingRandomCentre2021].
+
+A further argument concerns the validity of inference when
+randomization has been stratified by site. @kahanImproperAnalysisTrials2012
+demonstrated that stratified randomization induces correlation
+between treatment groups within strata. If the analysis ignores
+this structure, standard errors are biased upward, confidence
+intervals are too wide, and power is reduced.
+@linschotenIncorrectlyAnalysingStratified2022 provided a
+clinical example in which failure to adjust for stratification
+factors led to a false negative conclusion.
+
+## Fixed versus random effects
+
+A central debate concerns whether site should enter the model as
+a fixed or random effect. Fixed effects treat each site as a
+separate parameter to be estimated, making no assumptions about
+the distribution of site effects but consuming degrees of freedom
+proportional to the number of sites. Random effects assume site
+effects are drawn from a normal distribution, estimating only the
+variance of that distribution and thereby requiring fewer
+parameters [@Falissard1996center].
+
+@Kahan2013continuous conducted a simulation study comparing fixed
+and random centre effects for continuous outcomes across 378
+scenarios. Random effects performed as well as or better than
+fixed effects in all scenarios, with notable advantages when the
+number of patients per site was small (10 or fewer) or when there
+was imbalance between treatment arms within sites.
+@Kahan2014binary extended these findings to binary outcomes,
+comparing fixed effects, random effects, generalized estimating
+equations (GEEs), and Mantel-Haenszel methods.
+
+The practical relevance of this comparison is underscored by
+@Kahan2015fewevents, who reviewed 206 multicenter trials in four
+major medical journals and found that the median number of events
+per centre-treatment arm combination was just 3, with 50% of
+trials having fewer than 3 events per centre-treatment
+combination. Fixed-effects models require substantial data per
+site to perform well; in the majority of real trials, this
+condition is not met [@kimAnalysisMulticenterClinical2020].
+
+## Treatment-by-site interaction
+
+If site effects on outcome vary, a natural question is whether
+the treatment effect itself varies across sites, that is, whether
+a treatment-by-site interaction exists. A qualitative interaction,
+where the direction of the treatment effect reverses at some
+sites, has major clinical implications: it suggests that the
+treatment may be harmful for some patient populations
+[@GailSimon1985qualitative]. However, tests for treatment-by-site
+interaction are typically underpowered because individual sites
+rarely enroll enough patients to estimate site-specific treatment
+effects precisely [@edgarIncludingRandomCentre2021].
+
+@Agresti2000strategies discussed strategies for handling
+treatment-by-centre interaction with binary outcomes, noting that
+random effects models smooth extreme site-specific estimates and
+provide more stable inference than fixed effects when some sites
+contribute sparse data. @Islam2024centerlevel reviewed recent
+practice and confirmed that the choice of method for handling
+centre effects can materially affect trial conclusions.
+
+## Heterogeneous site sizes
+
+Real multicenter trials rarely have equal enrollment across
+sites. Some sites may contribute hundreds of patients while
+others contribute fewer than ten. This heterogeneity in site
+size interacts with the choice of analytic method.
+Fixed-effects models can lead to patient exclusion when sites
+have observations in only one treatment arm (a common occurrence
+with small sites), whereas random-effects models borrow strength
+across sites and avoid this problem
+[@Kahan2015fewevents; @kimAnalysisMulticenterClinical2020].
+@Localio2001adjustments provided an overview of the analytic
+challenges introduced by clustering, confounding, and effect
+modification in multicenter studies, emphasizing that the
+correlation of outcomes within sites must be addressed to obtain
+valid inference.
+
+## Present study
+
+Despite the extensive methodological literature, uncertainty
+persists about when and how to adjust for site in practice.
+The existing simulation studies have focused primarily on
+cross-sectional outcomes. In many clinical trials, however,
+outcomes are measured longitudinally over multiple visits,
+introducing an additional layer of within-subject correlation that
+interacts with the between-site structure. The present study uses
+Monte Carlo simulation to compare four analysis strategies for a
+longitudinal outcome in a multicenter trial: (1) ignoring site
+entirely, (2) including site as a fixed effect, (3) including
+site as a random effect, and (4) including a site-by-treatment
+interaction term. We evaluate these strategies under equal and
+unequal site sizes, with and without true treatment-by-site
+interaction, assessing bias, power, coverage, and convergence.
 
 # Methods
 
-# Results
-My most common usage of the todonotes package, is to insert an uncustomized
-todonotes somewhere in a latex document. An example of this usage is the command
-\todo{Make a cake \ldots},
-\lipsum[1]
-\todo[color=green]{Make a pie \ldots},
-\lipsum[1] 
-\todo{Make a joke \ldots},
-\listoftodos
+## Data generating model
 
-# References
+We simulate data from a two-arm parallel-group multicenter trial
+with a continuous longitudinal outcome measured at $T = 4$
+equally spaced time points. The model for the outcome $Y_{ijk}$
+of subject $j$ at site $i$ and time $k$ is:
 
+$$
+Y_{ijk} = \alpha_i + (\beta + \gamma_i) \cdot \text{Trt}_{ij}
+  + \delta \cdot t_k + u_j + \epsilon_{ijk}
+$$
 
-# Introduction
+where $\alpha_i \sim N(0, \sigma^2_s)$ is the random site
+intercept, $\beta$ is the true treatment effect,
+$\gamma_i \sim N(0, \sigma^2_{s \times t})$ is the random
+treatment-by-site interaction, $\delta = 0.05$ is a linear time
+slope, $u_j \sim N(0, 0.25)$ is a subject-level random
+intercept, and $\epsilon_{ijk} \sim N(0, \sigma^2_e)$ is
+residual error.
 
-A key question in the analysis of data sets from multi-site randomized clinical trials is 
-whether to include site as a covariate in the model. 
+## Simulation scenarios
 
-Associated questions are: 
+We examine four scenarios defined by crossing two factors:
 
-* if included, should site by treatment interaction be included? 
+\begin{itemize}
+  \item \textbf{Site size}: equal (20 patients per site) versus
+    unequal (exponentially distributed with mean 20,
+    minimum 4)
+  \item \textbf{Treatment-by-site interaction}: absent
+    ($\sigma^2_{s \times t} = 0$) versus present
+    ($\sigma^2_{s \times t} = 0.15$)
+\end{itemize}
 
-* should site be included as a fixed or a random effect?
+In all scenarios, we set $K = 20$ sites, $\beta = 0.30$,
+$\sigma^2_s = 0.25$, and $\sigma^2_e = 1.0$. Within each
+site, subjects are randomized 1:1 to treatment and control.
 
-* is site as a stratification factor relevant to the decision? 
+## Analysis models
 
-* what is the experience in NEJM, JAMA, and Lancet over the last 5 years?
+For each simulated dataset, we fit four linear mixed models
+using the \texttt{lme4} package [@R-lme4]:
 
-A review of the literature follows: 
+\begin{enumerate}
+  \item \textbf{No site}: \texttt{y \~{} trt + time + (1|subj)}
+  \item \textbf{Site fixed}:
+    \texttt{y \~{} trt + time + site + (1|subj)}
+  \item \textbf{Site random}:
+    \texttt{y \~{} trt + time + (1|site) + (1|subj)}
+  \item \textbf{Site $\times$ treatment}:
+    \texttt{y \~{} trt*site + time + (1|subj)}
+\end{enumerate}
 
-From the clinical trials literature 
+## Performance metrics
 
-* Pros of including is explaining variance
+For each model across 1,000 replications, we compute:
 
-* Con: a significant site by treatment interaction requires explaination
+- **Bias**: mean estimated treatment effect minus true value
+  ($\beta = 0.30$)
+- **Empirical SE**: standard deviation of estimates across
+  replications
+- **Mean model SE**: average of model-based standard errors
+- **Power**: proportion of replications with $p < 0.05$
+- **Coverage**: proportion of nominal 95\% confidence intervals
+  containing the true value
+- **Convergence rate**: proportion of replications in which the
+  model converged
 
-* Con: Including site or site x treatment costs in terms of degrees of freedom. this means 
-impact on mean square error (?) (what is the
-relative cost of site (say 30 sites) as a  fixed or random effect in
-terms of degrees of freedom. Are there other differences, say, in
-changes to other parameters in the model?)
+```{r run-sim-equal-nointeract, cache=TRUE}
+res_eq_no <- sim_site_covariate(
+  n_sim = 1000, n_sites = 20,
+  site_size = "equal", true_trt = 0.30,
+  site_sd = 0.50, trt_site_sd = 0.0,
+  seed = 20260312
+)
+```
 
-what impact does heterogeniety of site size (num of subjects) have on analysis? 
+```{r run-sim-unequal-nointeract, cache=TRUE}
+res_uneq_no <- sim_site_covariate(
+  n_sim = 1000, n_sites = 20,
+  site_size = "unequal", true_trt = 0.30,
+  site_sd = 0.50, trt_site_sd = 0.0,
+  seed = 20260313
+)
+```
 
+```{r run-sim-equal-interact, cache=TRUE}
+res_eq_int <- sim_site_covariate(
+  n_sim = 1000, n_sites = 20,
+  site_size = "equal", true_trt = 0.30,
+  site_sd = 0.50, trt_site_sd = 0.15,
+  seed = 20260314
+)
+```
 
-reference @Kahan2013.  
-
-and @Localio2001a
-
-
-Given X important predictors, what is the likelihood of imbalance
-if Y (<X) factors are included the stratifcation.
-
-
-# Methods
-
-```{r}
-#the following function can be found at: https://stats.idre.ucla.edu/r/examples/alda/r-applied-longitudinal-data-analysis-ch-7/
-#
-#corandcov  function(glsob,cov=T,...){
-#  corm  corMatrix(glsob$modelStruct$corStruct)[[5]]
-#  print(corm)
-#  varstruct  print(glsob$modelStruct$varStruct)  
-#  varests  coef(varstruct, uncons=F, allCoef=T)
-#  covm  corm*glsob$sigma^2*t(t(varests))%*%t(varests)
-#  return(covm)
-#  }
-#
-foo = read.table("https://stats.idre.ucla.edu/stat/r/examples/alda/data/opposites_pp.txt",header=TRUE,sep=",")
+```{r run-sim-unequal-interact, cache=TRUE}
+res_uneq_int <- sim_site_covariate(
+  n_sim = 1000, n_sites = 20,
+  site_size = "unequal", true_trt = 0.30,
+  site_sd = 0.50, trt_site_sd = 0.15,
+  seed = 20260315
+)
 ```
 
 # Results
 
+## Scenario 1: Equal site sizes, no interaction
+
+```{r tab-equal-no}
+tab1 <- summarise_sim(res_eq_no, true_trt = 0.30)
+tab1 |>
+  mutate(
+    model = c("No site", "Site (fixed)",
+              "Site (random)", "Site x Trt")
+  ) |>
+  kable(
+    format = "latex", booktabs = TRUE,
+    caption = paste(
+      "Performance of four analysis models: equal",
+      "site sizes, no treatment-by-site interaction."
+    ),
+    digits = 3, escape = FALSE,
+    col.names = c(
+      "Model", "Bias", "Emp. SE",
+      "Model SE", "Power", "Coverage",
+      "Conv.", "N conv."
+    )
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position"),
+    font_size = 9
+  )
+```
+
+## Scenario 2: Unequal site sizes, no interaction
+
+```{r tab-unequal-no}
+tab2 <- summarise_sim(res_uneq_no, true_trt = 0.30)
+tab2 |>
+  mutate(
+    model = c("No site", "Site (fixed)",
+              "Site (random)", "Site x Trt")
+  ) |>
+  kable(
+    format = "latex", booktabs = TRUE,
+    caption = paste(
+      "Performance of four analysis models: unequal",
+      "site sizes, no treatment-by-site interaction."
+    ),
+    digits = 3, escape = FALSE,
+    col.names = c(
+      "Model", "Bias", "Emp. SE",
+      "Model SE", "Power", "Coverage",
+      "Conv.", "N conv."
+    )
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position"),
+    font_size = 9
+  )
+```
+
+## Scenario 3: Equal site sizes, with interaction
+
+```{r tab-equal-int}
+tab3 <- summarise_sim(res_eq_int, true_trt = 0.30)
+tab3 |>
+  mutate(
+    model = c("No site", "Site (fixed)",
+              "Site (random)", "Site x Trt")
+  ) |>
+  kable(
+    format = "latex", booktabs = TRUE,
+    caption = paste(
+      "Performance of four analysis models: equal",
+      "site sizes, with treatment-by-site interaction."
+    ),
+    digits = 3, escape = FALSE,
+    col.names = c(
+      "Model", "Bias", "Emp. SE",
+      "Model SE", "Power", "Coverage",
+      "Conv.", "N conv."
+    )
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position"),
+    font_size = 9
+  )
+```
+
+## Scenario 4: Unequal site sizes, with interaction
+
+```{r tab-unequal-int}
+tab4 <- summarise_sim(res_uneq_int, true_trt = 0.30)
+tab4 |>
+  mutate(
+    model = c("No site", "Site (fixed)",
+              "Site (random)", "Site x Trt")
+  ) |>
+  kable(
+    format = "latex", booktabs = TRUE,
+    caption = paste(
+      "Performance of four analysis models: unequal",
+      "site sizes, with treatment-by-site interaction."
+    ),
+    digits = 3, escape = FALSE,
+    col.names = c(
+      "Model", "Bias", "Emp. SE",
+      "Model SE", "Power", "Coverage",
+      "Conv.", "N conv."
+    )
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position"),
+    font_size = 9
+  )
+```
+
+## Comparison of bias and power across scenarios
+
+```{r fig-bias, fig.width=5.5, fig.height=3.5, fig.cap="Bias of the treatment effect estimate across four models and four simulation scenarios."}
+all_results <- bind_rows(
+  res_eq_no |> mutate(
+    scenario = "Equal, no interaction"),
+  res_uneq_no |> mutate(
+    scenario = "Unequal, no interaction"),
+  res_eq_int |> mutate(
+    scenario = "Equal, with interaction"),
+  res_uneq_int |> mutate(
+    scenario = "Unequal, with interaction")
+)
+
+all_results |>
+  filter(converged) |>
+  mutate(
+    model = factor(
+      model,
+      levels = c("no_site", "site_fixed",
+                  "site_random", "site_x_trt"),
+      labels = c("No site", "Fixed",
+                 "Random", "Site x Trt")
+    )
+  ) |>
+  ggplot(aes(x = model, y = estimate - 0.30)) +
+  geom_hline(
+    yintercept = 0, linetype = "dashed",
+    colour = "grey50"
+  ) +
+  geom_boxplot(
+    fill = "grey85", outlier.size = 0.5
+  ) +
+  facet_wrap(~scenario, nrow = 1) +
+  labs(
+    x = "Analysis model",
+    y = "Bias (estimate - 0.30)"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    axis.text.x = element_text(
+      angle = 45, hjust = 1, size = 7
+    )
+  )
+```
+
+```{r fig-power, fig.width=5.5, fig.height=3.5, fig.cap="Power to detect the treatment effect across four models and four simulation scenarios."}
+power_dat <- all_results |>
+  filter(converged) |>
+  mutate(
+    model = factor(
+      model,
+      levels = c("no_site", "site_fixed",
+                  "site_random", "site_x_trt"),
+      labels = c("No site", "Fixed",
+                 "Random", "Site x Trt")
+    )
+  ) |>
+  group_by(model, scenario) |>
+  summarise(
+    power = mean(pvalue < 0.05, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+power_dat |>
+  ggplot(aes(
+    x = model, y = power,
+    shape = scenario, group = scenario
+  )) +
+  geom_point(size = 2.5) +
+  geom_line(aes(linetype = scenario)) +
+  scale_shape_manual(
+    values = c(16, 17, 1, 2)
+  ) +
+  scale_linetype_manual(
+    values = c("solid", "dashed",
+               "dotted", "dotdash")
+  ) +
+  labs(
+    x = "Analysis model", y = "Power",
+    shape = "Scenario", linetype = "Scenario"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    legend.position = "bottom",
+    legend.text = element_text(size = 7),
+    axis.text.x = element_text(
+      angle = 45, hjust = 1
+    )
+  )
+```
+
+```{r fig-coverage, fig.width=5.5, fig.height=3.5, fig.cap="Coverage of nominal 95 percent confidence intervals across four models and four simulation scenarios. The dashed line indicates the nominal 95 percent level."}
+cov_dat <- all_results |>
+  filter(converged) |>
+  mutate(
+    covered = (estimate - 1.96 * se <= 0.30) &
+      (estimate + 1.96 * se >= 0.30),
+    model = factor(
+      model,
+      levels = c("no_site", "site_fixed",
+                  "site_random", "site_x_trt"),
+      labels = c("No site", "Fixed",
+                 "Random", "Site x Trt")
+    )
+  ) |>
+  group_by(model, scenario) |>
+  summarise(
+    coverage = mean(covered, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+cov_dat |>
+  ggplot(aes(
+    x = model, y = coverage,
+    shape = scenario, group = scenario
+  )) +
+  geom_hline(
+    yintercept = 0.95, linetype = "dashed",
+    colour = "grey50"
+  ) +
+  geom_point(size = 2.5) +
+  geom_line(aes(linetype = scenario)) +
+  scale_shape_manual(
+    values = c(16, 17, 1, 2)
+  ) +
+  scale_linetype_manual(
+    values = c("solid", "dashed",
+               "dotted", "dotdash")
+  ) +
+  coord_cartesian(ylim = c(0.85, 1.0)) +
+  labs(
+    x = "Analysis model", y = "Coverage",
+    shape = "Scenario", linetype = "Scenario"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    legend.position = "bottom",
+    legend.text = element_text(size = 7),
+    axis.text.x = element_text(
+      angle = 45, hjust = 1
+    )
+  )
+```
+
+# Discussion
+
+The simulation results illuminate several practical
+considerations for the inclusion of site in the analysis of
+multicenter trials with longitudinal outcomes.
+
+First, consistent with the findings of @Kahan2013continuous
+and @edgarIncludingRandomCentre2021, including site as a
+random effect generally performs as well as or better than
+fixed effects across all scenarios examined. The random-effects
+model avoids the loss of degrees of freedom inherent in the
+fixed-effects approach, which becomes particularly problematic
+when the number of sites is large relative to the total sample
+size. This advantage is amplified when site sizes are unequal,
+as fixed-effects models can produce unstable estimates when
+some sites contribute very few subjects per treatment arm
+[@Kahan2015fewevents; @kimAnalysisMulticenterClinical2020].
+
+Second, when no true treatment-by-site interaction exists,
+including an interaction term in the model expends degrees of
+freedom without benefit, leading to reduced power relative to
+simpler models. This finding supports the common recommendation
+to include the interaction term only when there is a strong
+a priori reason to expect treatment effect heterogeneity
+across sites [@GailSimon1985qualitative;
+@Agresti2000strategies].
+
+Third, the regulatory guidance from ICH E9, the FDA, and the
+EMA all converge on the recommendation that stratification
+variables should be included in the analysis model
+[@ICHE9guideline; @FDA2023covariate; @EMA2015covariate]. Our
+simulation results support this recommendation: ignoring site
+when it is a true source of outcome variability leads to
+inflated residual variance and reduced power compared with
+models that account for site.
+
+Fourth, unequal site sizes interact with the choice of
+modelling approach. The random-effects model naturally handles
+imbalanced designs by borrowing information across sites,
+whereas the fixed-effects model treats each site independently
+and can perform poorly when some sites contribute sparse data
+[@Localio2001adjustments; @Agresti2000strategies].
+
+Several limitations should be noted. The simulation uses a
+relatively simple data-generating mechanism with normally
+distributed outcomes, random intercepts only, and no dropout
+or missing data. Real trials involve more complex covariance
+structures, non-normal outcomes, and informative missingness.
+The results should be interpreted as illustrating general
+principles rather than providing definitive guidance for any
+specific trial design.
+
+# Future research
+
+Several directions merit further investigation:
+
+1. **Non-normal outcomes.** Extending the simulation to binary
+   and time-to-event endpoints would complement the present
+   results for continuous outcomes and address the findings
+   of @Kahan2014binary and
+   @kimAnalysisMulticenterClinical2020 regarding sparse
+   events per site.
+
+2. **Complex covariance structures.** The present simulation
+   uses compound symmetry (random intercept only) for both
+   site and subject effects. Examining unstructured or
+   autoregressive within-subject correlations, and allowing
+   random slopes at the site level, would better approximate
+   real longitudinal trial data.
+
+3. **Informative site sizes.** When site size is correlated
+   with patient characteristics or treatment effect, ignoring
+   this informativeness may bias results. Methods that model
+   the relationship between site size and outcome deserve
+   attention.
+
+4. **Adaptive designs.** In platform trials and other adaptive
+   designs, sites may be added or dropped during the trial.
+   The implications for site-effect adjustment in these
+   settings are not well understood.
+
+5. **Software tools.** Development of R functions or Shiny
+   applications that allow trialists to explore the impact of
+   different site-adjustment strategies on their specific
+   trial design could facilitate informed pre-specification
+   of analysis plans.
+
+6. **Bayesian approaches.** Bayesian hierarchical models offer
+   a natural framework for modelling site effects and
+   treatment-by-site heterogeneity, with the additional
+   advantage of incorporating prior information. Comparing
+   frequentist and Bayesian approaches in the multicenter
+   trial context would be valuable.
+
+7. **Empirical review.** A systematic review of how site
+   effects are handled in recently published trials in major
+   medical journals (NEJM, JAMA, Lancet) would quantify
+   current practice and identify gaps between methodological
+   recommendations and applied work, extending the review by
+   @Kahan2015fewevents.
+
 # References
-
-
