@@ -6,11 +6,14 @@ sim_site_covariate <- function(
     site_sd = 0.50,
     trt_site_sd = 0.0,
     n_time = 4,
-    resid_sd = 1.0,
-    seed = 20260312
+    resid_sd = 1.0
 ) {
 
-  set.seed(seed)
+  # Morris, White, and Crowther (2019) §4.1: the RNG seed is set ONCE
+  # by the caller; this function does NOT call `set.seed()`. Per-rep
+  # RNG states are captured and attached as an attribute of the return
+  # value for diagnostic reproducibility of any failing replication.
+  rng_states <- vector("list", n_sim)
 
   n_per_site <- if (site_size == "equal") {
     rep(20, n_sites)
@@ -23,6 +26,7 @@ sim_site_covariate <- function(
   results <- vector("list", n_sim)
 
   for (s in seq_len(n_sim)) {
+    rng_states[[s]] <- .Random.seed
 
     site_intercept <- rnorm(n_sites, 0, site_sd)
     trt_by_site <- rnorm(n_sites, 0, trt_site_sd)
@@ -157,28 +161,49 @@ sim_site_covariate <- function(
     n_sim = n_sim, n_sites = n_sites,
     site_size = site_size, true_trt = true_trt,
     site_sd = site_sd, trt_site_sd = trt_site_sd,
-    n_time = n_time, resid_sd = resid_sd, seed = seed
+    n_time = n_time, resid_sd = resid_sd
   )
+  attr(out, "rng_states") <- rng_states
 
   out
 }
 
 summarise_sim <- function(sim_results, true_trt = 0.30) {
+  # Morris et al. (2019) Table 6: report Monte Carlo SEs alongside
+  # every performance estimate. Convergence is treated as a
+  # first-class outcome per Morris §5.1 rather than silently
+  # dropping non-converged replications.
   sim_results |>
-    dplyr::filter(converged) |>
     dplyr::group_by(model) |>
     dplyr::summarise(
+      n_total = dplyr::n(),
+      n_converged = sum(converged),
+      convergence_rate = n_converged / n_total,
+      mcse_convergence = sqrt(
+        convergence_rate * (1 - convergence_rate) / n_total
+      ),
       bias = mean(estimate - true_trt, na.rm = TRUE),
-      empirical_se = sd(estimate, na.rm = TRUE),
+      mcse_bias = stats::sd(estimate, na.rm = TRUE) /
+        sqrt(n_converged),
+      empirical_se = stats::sd(estimate, na.rm = TRUE),
+      mcse_empirical_se = empirical_se /
+        sqrt(2 * (n_converged - 1)),
+      mse = mean((estimate - true_trt)^2, na.rm = TRUE),
+      mcse_mse = sqrt(
+        stats::var((estimate - true_trt)^2, na.rm = TRUE) /
+          n_converged
+      ),
       mean_model_se = mean(se, na.rm = TRUE),
       power = mean(pvalue < 0.05, na.rm = TRUE),
+      mcse_power = sqrt(power * (1 - power) / n_converged),
       coverage = mean(
         (estimate - 1.96 * se <= true_trt) &
           (estimate + 1.96 * se >= true_trt),
         na.rm = TRUE
       ),
-      convergence = mean(converged, na.rm = TRUE),
-      n_converged = sum(converged),
+      mcse_coverage = sqrt(
+        coverage * (1 - coverage) / n_converged
+      ),
       .groups = "drop"
     )
 }

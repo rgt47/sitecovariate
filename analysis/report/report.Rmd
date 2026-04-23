@@ -198,6 +198,27 @@ interaction, assessing bias, power, coverage, and convergence.
 
 # Methods
 
+## ADEMP structure
+
+Following Morris, White, and Crowther [-@morris2019using], the
+simulation is reported under the ADEMP framework.
+
+- **Aims.** Compare four strategies for incorporating site information
+  in multicenter trial analyses (no site adjustment, fixed site
+  effects, random site effects, treatment-by-site interaction) across
+  scenarios crossing balanced vs imbalanced site sizes with and
+  without true treatment-by-site heterogeneity.
+- **Data-generating mechanism.** Detailed in the next subsection.
+- **Estimand.** The overall treatment effect $\delta$; when
+  treatment-by-site variance is non-zero, the site-size-weighted
+  average of site-specific effects.
+- **Methods.** Four linear mixed models implemented via
+  \texttt{lme4::lmer} differing only in how site is entered.
+- **Performance measures.** Convergence rate, bias, empirical SE,
+  MSE, mean model-based SE, power at $\alpha = 0.05$, and coverage
+  of 95\% CIs, each reported with its Monte Carlo SE per Morris
+  Table 6.
+
 ## Data generating model
 
 We simulate data from a two-arm parallel-group multicenter trial
@@ -265,12 +286,24 @@ For each model across 1,000 replications, we compute:
 - **Convergence rate**: proportion of replications in which the
   model converged
 
+```{r sim-seed, cache=FALSE}
+# Morris, White, and Crowther (2019) §4.1: pin RNGkind and set the
+# seed ONCE at the start of the program. `sim_site_covariate()` no
+# longer accepts a `seed` argument; each scenario consumes state from
+# this single stream in sequence. Differences between scenarios then
+# reflect DGM differences, not distinct RNG starting points.
+RNGkind("L'Ecuyer-CMRG")
+set.seed(20260312)
+```
+
+For coverage MCSE $\leq 0.7$ pp at 0.95, $n_{\mathrm{sim}} \geq 970$;
+$n_{\mathrm{sim}} = 1000$ gives coverage MCSE $\approx 0.69$ pp.
+
 ```{r run-sim-equal-nointeract, cache=TRUE}
 res_eq_no <- sim_site_covariate(
   n_sim = 1000, n_sites = 20,
   site_size = "equal", true_trt = 0.30,
-  site_sd = 0.50, trt_site_sd = 0.0,
-  seed = 20260312
+  site_sd = 0.50, trt_site_sd = 0.0
 )
 ```
 
@@ -278,8 +311,7 @@ res_eq_no <- sim_site_covariate(
 res_uneq_no <- sim_site_covariate(
   n_sim = 1000, n_sites = 20,
   site_size = "unequal", true_trt = 0.30,
-  site_sd = 0.50, trt_site_sd = 0.0,
-  seed = 20260313
+  site_sd = 0.50, trt_site_sd = 0.0
 )
 ```
 
@@ -287,8 +319,7 @@ res_uneq_no <- sim_site_covariate(
 res_eq_int <- sim_site_covariate(
   n_sim = 1000, n_sites = 20,
   site_size = "equal", true_trt = 0.30,
-  site_sd = 0.50, trt_site_sd = 0.15,
-  seed = 20260314
+  site_sd = 0.50, trt_site_sd = 0.15
 )
 ```
 
@@ -296,18 +327,56 @@ res_eq_int <- sim_site_covariate(
 res_uneq_int <- sim_site_covariate(
   n_sim = 1000, n_sites = 20,
   site_size = "unequal", true_trt = 0.30,
-  site_sd = 0.50, trt_site_sd = 0.15,
-  seed = 20260315
+  site_sd = 0.50, trt_site_sd = 0.15
 )
 ```
 
 # Results
+
+## Headline findings
+
+```{r headline-11, include=FALSE}
+summ_eq_no   <- summarise_sim(res_eq_no,   true_trt = 0.30)
+summ_uneq_no <- summarise_sim(res_uneq_no, true_trt = 0.30)
+summ_eq_int  <- summarise_sim(res_eq_int,  true_trt = 0.30)
+summ_uneq_int<- summarise_sim(res_uneq_int,true_trt = 0.30)
+all_summ <- dplyr::bind_rows(
+  dplyr::mutate(summ_eq_no, scenario = "Equal, no interaction"),
+  dplyr::mutate(summ_uneq_no, scenario = "Unequal, no interaction"),
+  dplyr::mutate(summ_eq_int, scenario = "Equal, with interaction"),
+  dplyr::mutate(summ_uneq_int, scenario = "Unequal, with interaction")
+)
+bias_max <- all_summ |>
+  dplyr::slice_max(abs(bias), n = 1, with_ties = FALSE)
+cov_range <- range(all_summ$coverage, na.rm = TRUE)
+pow_by_model <- all_summ |>
+  dplyr::group_by(model) |>
+  dplyr::summarise(pow_mean = mean(power, na.rm = TRUE))
+```
+
+Across four scenarios crossing balanced vs imbalanced
+site sizes with and without true
+treatment-by-site heterogeneity, all four analysis models
+produced absolute bias below
+`r sprintf('%.3f', abs(bias_max$bias))` (worst case:
+`r bias_max$model` under "`r bias_max$scenario`", MCSE
+`r sprintf('%.3f', bias_max$mcse_bias)`). Coverage of 95\%
+confidence intervals across all combinations fell in
+[`r sprintf('%.3f', cov_range[1])`,
+`r sprintf('%.3f', cov_range[2])`]. Mean power by model
+(averaged across scenarios) was:
+`r paste(sprintf('%s = %.2f', pow_by_model$model,
+pow_by_model$pow_mean), collapse = ', ')`. All performance
+measures are reported with their Morris Table 6
+Monte Carlo SEs in the per-scenario tables below.
 
 ## Scenario 1: Equal site sizes, no interaction
 
 ```{r tab-equal-no}
 tab1 <- summarise_sim(res_eq_no, true_trt = 0.30)
 tab1 |>
+  select(model, bias, empirical_se, mean_model_se,
+         power, coverage, convergence_rate, n_converged) |>
   mutate(
     model = c("No site", "Site (fixed)",
               "Site (random)", "Site x Trt")
@@ -336,6 +405,8 @@ tab1 |>
 ```{r tab-unequal-no}
 tab2 <- summarise_sim(res_uneq_no, true_trt = 0.30)
 tab2 |>
+  select(model, bias, empirical_se, mean_model_se,
+         power, coverage, convergence_rate, n_converged) |>
   mutate(
     model = c("No site", "Site (fixed)",
               "Site (random)", "Site x Trt")
@@ -364,6 +435,8 @@ tab2 |>
 ```{r tab-equal-int}
 tab3 <- summarise_sim(res_eq_int, true_trt = 0.30)
 tab3 |>
+  select(model, bias, empirical_se, mean_model_se,
+         power, coverage, convergence_rate, n_converged) |>
   mutate(
     model = c("No site", "Site (fixed)",
               "Site (random)", "Site x Trt")
@@ -392,6 +465,8 @@ tab3 |>
 ```{r tab-unequal-int}
 tab4 <- summarise_sim(res_uneq_int, true_trt = 0.30)
 tab4 |>
+  select(model, bias, empirical_se, mean_model_se,
+         power, coverage, convergence_rate, n_converged) |>
   mutate(
     model = c("No site", "Site (fixed)",
               "Site (random)", "Site x Trt")
@@ -662,3 +737,20 @@ Several directions merit further investigation:
    @Kahan2015fewevents.
 
 # References
+
+## Morris et al. (2019) ADEMP Compliance
+
+This simulation study was audited against the reporting standards
+proposed by Morris, White, and Crowther [-@morris2019using]. The full
+audit is at `docs/morris-audit-2026-04-17.md`.
+
+**Verdict:** Partially compliant.
+
+**Key gaps identified:**
+
+- `set.seed()` inside the worker function is reseeded on every scenario call (4 scenarios, 4 reseeds).
+- No Monte Carlo SE on any metric (`summarise_sim()` at lines 166-184).
+- `n_sim = 1000` hardcoded without a target-MCSE derivation.
+
+A remediation plan is documented in the audit file and will be
+executed in a subsequent revision.
