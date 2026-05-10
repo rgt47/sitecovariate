@@ -1,6 +1,6 @@
 ---
 title: "Should site be a covariate in the analysis model?"
-author: "Ronald G. Thomas, Ph.D."
+author: "Ronald G. Thomas, Ph.D.\\thanks{Wertheim School of Public Health, UCSD; ORCID: 0000-0003-1686-4965}"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 fontsize: 11pt
 geometry: "left=3cm,right=5cm,top=2cm,bottom=2cm"
