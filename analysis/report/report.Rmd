@@ -49,6 +49,54 @@ options(scipen = 1, digits = 3)
 source("../scripts/sim_site_covariate.R")
 ```
 
+# Abstract
+
+**Background.** Multicenter randomised clinical trials
+recruit patients across multiple sites, introducing site as a
+potential source of outcome variability. Whether and how site
+should enter the analysis model — as a fixed effect, a random
+effect, or as the basis for treatment-by-site interaction
+testing — is a decision with consequences for power, type I
+error, and the inferential target of the trial. Regulatory
+guidance from ICH E9, the FDA, and the EMA recommend that
+stratification variables be included in the analysis model,
+but the choice between fixed and random effects, and the
+inclusion or exclusion of treatment-by-site interaction
+terms, has remained pragmatic.
+
+**Methods.** We conduct a Monte Carlo simulation comparing
+four linear-mixed analysis models (no site, site as fixed
+effect, site as random effect, site-by-treatment interaction)
+across four scenarios crossing equal-versus-unequal site
+sizes with the presence-versus-absence of true
+treatment-by-site interaction. Each scenario is evaluated at
+$n_{\text{sim}} = 1{,}000$ replicates with bias, empirical
+SE, model-based SE, power, coverage, and convergence rate
+reported.
+
+**Results.** Including site as a random effect generally
+performs as well as or better than the fixed-effects approach
+across all scenarios examined, consistent with
+@Kahan2013continuous and @edgarIncludingRandomCentre2021. The
+random-effects model avoids the loss of degrees of freedom
+inherent in the fixed-effects approach, which becomes
+particularly problematic when the number of sites is large
+relative to the total sample size, and is amplified when site
+sizes are unequal. When no true treatment-by-site interaction
+exists, including the interaction term expends degrees of
+freedom without benefit and reduces power. Ignoring site when
+it is a true source of outcome variability inflates residual
+variance and reduces power.
+
+**Conclusions.** Site should be included in the analysis
+model as a random effect when site is a stratification
+variable or contributes to outcome variability. The
+treatment-by-site interaction term should be included only
+when there is a strong a priori reason to expect treatment
+effect heterogeneity across sites. The simulation evidence
+supports the regulatory recommendation that stratification
+variables enter the analysis as covariates.
+
 # Introduction
 
 A key question in the analysis of data from multi-site randomized
@@ -735,6 +783,42 @@ Several directions merit further investigation:
    current practice and identify gaps between methodological
    recommendations and applied work, extending the review by
    @Kahan2015fewevents.
+
+# Conflict of interest
+
+The author declares no conflicts of interest.
+
+# Funding
+
+This work received no specific funding.
+
+# Data availability statement
+
+The R simulation engine, driver scripts, and cached results
+that populate the manuscript's tables and figures are openly
+available in the `sitecovariate` project repository.
+Specific paths are listed in the Reproducibility section
+below.
+
+# Reproducibility
+
+This manuscript was rendered with R 4.4.x. Principal packages
+used by the simulation pipeline are `lme4` (the linear-mixed
+fitter), `MASS` (multivariate normal data generation),
+`furrr` and `future` (parallel processing), `dplyr` and
+`ggplot2` (reporting), and `rmarkdown` plus `bookdown` for
+the manuscript build.
+
+**Random-number generator.** The simulation driver follows
+@morris2019using §4.1: `RNGkind` is pinned
+and `set.seed(20260411)` is called once at the start of the
+program. Per-replicate seeds derive from this master stream.
+
+**Data and code availability.** The simulation engine is at
+`analysis/scripts/sim_site_covariate.R`. Cached simulation
+outputs are at `analysis/data/`. The manuscript source,
+bibliography (`references.bib`), and SIM CSL file are at
+`analysis/report/`.
 
 # References
 

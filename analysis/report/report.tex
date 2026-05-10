@@ -118,7 +118,7 @@
 
 \title{Should site be a covariate in the analysis model?}
 \author{R.G. Thomas}
-\date{April 20, 2026}
+\date{May 08, 2026}
 
 \begin{document}
 \maketitle
@@ -127,6 +127,50 @@
 \setcounter{tocdepth}{2}
 \tableofcontents
 }
+\section{Abstract}\label{abstract}
+
+\textbf{Background.} Multicenter randomised clinical trials recruit
+patients across multiple sites, introducing site as a potential source
+of outcome variability. Whether and how site should enter the analysis
+model --- as a fixed effect, a random effect, or as the basis for
+treatment-by-site interaction testing --- is a decision with
+consequences for power, type I error, and the inferential target of the
+trial. Regulatory guidance from ICH E9, the FDA, and the EMA recommend
+that stratification variables be included in the analysis model, but the
+choice between fixed and random effects, and the inclusion or exclusion
+of treatment-by-site interaction terms, has remained pragmatic.
+
+\textbf{Methods.} We conduct a Monte Carlo simulation comparing four
+linear-mixed analysis models (no site, site as fixed effect, site as
+random effect, site-by-treatment interaction) across four scenarios
+crossing equal-versus-unequal site sizes with the
+presence-versus-absence of true treatment-by-site interaction. Each
+scenario is evaluated at \(n_{\text{sim}} = 1{,}000\) replicates with
+bias, empirical SE, model-based SE, power, coverage, and convergence
+rate reported.
+
+\textbf{Results.} Including site as a random effect generally performs
+as well as or better than the fixed-effects approach across all
+scenarios examined, consistent
+with\textsuperscript{\citeproc{ref-Kahan2013continuous}{1}}
+and\textsuperscript{\citeproc{ref-edgarIncludingRandomCentre2021}{2}}.
+The random-effects model avoids the loss of degrees of freedom inherent
+in the fixed-effects approach, which becomes particularly problematic
+when the number of sites is large relative to the total sample size, and
+is amplified when site sizes are unequal. When no true treatment-by-site
+interaction exists, including the interaction term expends degrees of
+freedom without benefit and reduces power. Ignoring site when it is a
+true source of outcome variability inflates residual variance and
+reduces power.
+
+\textbf{Conclusions.} Site should be included in the analysis model as a
+random effect when site is a stratification variable or contributes to
+outcome variability. The treatment-by-site interaction term should be
+included only when there is a strong a priori reason to expect treatment
+effect heterogeneity across sites. The simulation evidence supports the
+regulatory recommendation that stratification variables enter the
+analysis as covariates.
+
 \section{Introduction}\label{introduction}
 
 A key question in the analysis of data from multi-site randomized
@@ -135,7 +179,7 @@ covariate in the analysis model. The question is not merely academic:
 the choice of whether to adjust for site, and whether to treat it as a
 fixed or random effect, can influence estimates of treatment effect,
 standard errors, confidence interval width, and statistical
-power\textsuperscript{\citeproc{ref-Localio2001adjustments}{1},\citeproc{ref-Kahan2013continuous}{2}}.
+power\textsuperscript{\citeproc{ref-Kahan2013continuous}{1},\citeproc{ref-Localio2001adjustments}{3}}.
 
 Multicenter trials are conducted to increase enrollment rates and
 improve the generalizability of findings across clinical settings.
@@ -145,7 +189,7 @@ to be more similar to one another than to patients at other sites, owing
 to shared clinical practices, patient populations, and local standards
 of care. This within-site correlation, or clustering, violates the
 independence assumption underlying many standard statistical
-methods\textsuperscript{\citeproc{ref-Localio2001adjustments}{1}}.
+methods\textsuperscript{\citeproc{ref-Localio2001adjustments}{3}}.
 
 \subsection{Regulatory context}\label{regulatory-context}
 
@@ -153,17 +197,17 @@ Both international and national regulatory bodies have addressed the
 role of covariates, including site, in the analysis of clinical trials.
 The ICH E9 guideline states that `factors on which randomisation has
 been stratified should be accounted for later in the
-analysis'\textsuperscript{\citeproc{ref-ICHE9guideline}{3}}. When
+analysis'\textsuperscript{\citeproc{ref-ICHE9guideline}{4}}. When
 randomization is stratified by site, this implies that site should
 appear in the analysis model. The United States Food and Drug
 Administration (FDA) 2023 guidance on covariate adjustment reinforces
 this position, recommending that stratification variables be included in
 the primary analysis
-model\textsuperscript{\citeproc{ref-FDA2023covariate}{4}}. The European
+model\textsuperscript{\citeproc{ref-FDA2023covariate}{5}}. The European
 Medicines Agency (EMA) similarly advises that stratification factors be
 incorporated unless stratification was performed for purely
 administrative
-reasons\textsuperscript{\citeproc{ref-EMA2015covariate}{5}}.
+reasons\textsuperscript{\citeproc{ref-EMA2015covariate}{6}}.
 
 \subsection{The case for adjusting for
 site}\label{the-case-for-adjusting-for-site}
@@ -171,14 +215,14 @@ site}\label{the-case-for-adjusting-for-site}
 The primary statistical argument for including site in the analysis
 model is that it can reduce residual variance, thereby increasing the
 precision of treatment effect estimates and improving
-power\textsuperscript{\citeproc{ref-Kahan2014rewards}{6}}. When outcome
+power\textsuperscript{\citeproc{ref-Kahan2014rewards}{7}}. When outcome
 rates or levels differ substantially across sites, whether because of
 differences in patient populations, diagnostic practices, or supportive
 care, failing to account for this heterogeneity leaves variance
 unexplained in the error term. Adjustment for site absorbs this
 between-site variability and can yield narrower confidence intervals for
 the treatment
-effect\textsuperscript{\citeproc{ref-Kahan2013continuous}{2},\citeproc{ref-edgarIncludingRandomCentre2021}{7}}.
+effect\textsuperscript{\citeproc{ref-Kahan2013continuous}{1},\citeproc{ref-edgarIncludingRandomCentre2021}{2}}.
 
 A further argument concerns the validity of inference when randomization
 has been stratified by
@@ -203,7 +247,7 @@ distribution, estimating only the variance of that distribution and
 thereby requiring fewer
 parameters\textsuperscript{\citeproc{ref-Falissard1996center}{10}}.
 
-\textsuperscript{\citeproc{ref-Kahan2013continuous}{2}} conducted a
+\textsuperscript{\citeproc{ref-Kahan2013continuous}{1}} conducted a
 simulation study comparing fixed and random centre effects for
 continuous outcomes across 378 scenarios. Random effects performed as
 well as or better than fixed effects in all scenarios, with notable
@@ -236,7 +280,7 @@ populations\textsuperscript{\citeproc{ref-GailSimon1985qualitative}{13}}.
 However, tests for treatment-by-site interaction are typically
 underpowered because individual sites rarely enroll enough patients to
 estimate site-specific treatment effects
-precisely\textsuperscript{\citeproc{ref-edgarIncludingRandomCentre2021}{7}}.
+precisely\textsuperscript{\citeproc{ref-edgarIncludingRandomCentre2021}{2}}.
 
 \textsuperscript{\citeproc{ref-Agresti2000strategies}{14}} discussed
 strategies for handling treatment-by-centre interaction with binary
@@ -256,7 +300,7 @@ analytic method. Fixed-effects models can lead to patient exclusion when
 sites have observations in only one treatment arm (a common occurrence
 with small sites), whereas random-effects models borrow strength across
 sites and avoid this
-problem\textsuperscript{\citeproc{ref-kimAnalysisMulticenterClinical2020}{12},\citeproc{ref-Kahan2015fewevents}{16}}.\textsuperscript{\citeproc{ref-Localio2001adjustments}{1}}
+problem\textsuperscript{\citeproc{ref-kimAnalysisMulticenterClinical2020}{12},\citeproc{ref-Kahan2015fewevents}{16}}.\textsuperscript{\citeproc{ref-Localio2001adjustments}{3}}
 provided an overview of the analytic challenges introduced by
 clustering, confounding, and effect modification in multicenter studies,
 emphasizing that the correlation of outcomes within sites must be
@@ -348,8 +392,7 @@ subjects are randomized 1:1 to treatment and control.
 \subsection{Analysis models}\label{analysis-models}
 
 For each simulated dataset, we fit four linear mixed models using the
-\texttt{lme4}
-package\textsuperscript{\citeproc{ref-R-lme4}{\textbf{R-lme4?}}}:
+\texttt{lme4} package\textsuperscript{\citeproc{ref-R-lme4}{18}}:
 
 \begin{enumerate}
   \item \textbf{No site}: \texttt{y \~{} trt + time + (1|subj)}
@@ -390,6 +433,18 @@ For coverage MCSE \(\leq 0.7\) pp at 0.95,
 coverage MCSE \(\approx 0.69\) pp.
 
 \section{Results}\label{results}
+
+\subsection{Headline findings}\label{headline-findings}
+
+Across four scenarios crossing balanced vs imbalanced site sizes with
+and without true treatment-by-site heterogeneity, all four analysis
+models produced absolute bias below 0.002 (worst case: no\_site under
+``Equal, with interaction'', MCSE 0.002). Coverage of 95\% confidence
+intervals across all combinations fell in {[}0.914, 0.983{]}. Mean power
+by model (averaged across scenarios) was: no\_site = 0.94, site\_fixed =
+0.97, site\_random = 0.97, site\_x\_trt = 0.97. All performance measures
+are reported with their Morris Table 6 Monte Carlo SEs in the
+per-scenario tables below.
 
 \subsection{Scenario 1: Equal site sizes, no
 interaction}\label{scenario-1-equal-site-sizes-no-interaction}
@@ -503,8 +558,8 @@ the inclusion of site in the analysis of multicenter trials with
 longitudinal outcomes.
 
 First, consistent with the findings
-of\textsuperscript{\citeproc{ref-Kahan2013continuous}{2}}
-and\textsuperscript{\citeproc{ref-edgarIncludingRandomCentre2021}{7}},
+of\textsuperscript{\citeproc{ref-Kahan2013continuous}{1}}
+and\textsuperscript{\citeproc{ref-edgarIncludingRandomCentre2021}{2}},
 including site as a random effect generally performs as well as or
 better than fixed effects across all scenarios examined. The
 random-effects model avoids the loss of degrees of freedom inherent in
@@ -526,7 +581,7 @@ sites\textsuperscript{\citeproc{ref-GailSimon1985qualitative}{13},\citeproc{ref-
 Third, the regulatory guidance from ICH E9, the FDA, and the EMA all
 converge on the recommendation that stratification variables should be
 included in the analysis
-model\textsuperscript{\citeproc{ref-ICHE9guideline}{3}--\citeproc{ref-EMA2015covariate}{5}}.
+model\textsuperscript{\citeproc{ref-ICHE9guideline}{4}--\citeproc{ref-EMA2015covariate}{6}}.
 Our simulation results support this recommendation: ignoring site when
 it is a true source of outcome variability leads to inflated residual
 variance and reduced power compared with models that account for site.
@@ -536,7 +591,7 @@ approach. The random-effects model naturally handles imbalanced designs
 by borrowing information across sites, whereas the fixed-effects model
 treats each site independently and can perform poorly when some sites
 contribute sparse
-data\textsuperscript{\citeproc{ref-Localio2001adjustments}{1},\citeproc{ref-Agresti2000strategies}{14}}.
+data\textsuperscript{\citeproc{ref-Localio2001adjustments}{3},\citeproc{ref-Agresti2000strategies}{14}}.
 
 Several limitations should be noted. The simulation uses a relatively
 simple data-generating mechanism with normally distributed outcomes,
@@ -600,6 +655,42 @@ Several directions merit further investigation:
   \end{enumerate}
 \end{enumerate}
 
+\section{Conflict of interest}\label{conflict-of-interest}
+
+The author declares no conflicts of interest.
+
+\section{Funding}\label{funding}
+
+This work received no specific funding.
+
+\section{Data availability statement}\label{data-availability-statement}
+
+The R simulation engine, driver scripts, and cached results that
+populate the manuscript's tables and figures are openly available in the
+\texttt{sitecovariate} project repository. Specific paths are listed in
+the Reproducibility section below.
+
+\section{Reproducibility}\label{reproducibility}
+
+This manuscript was rendered with R 4.4.x. Principal packages used by
+the simulation pipeline are \texttt{lme4} (the linear-mixed fitter),
+\texttt{MASS} (multivariate normal data generation), \texttt{furrr} and
+\texttt{future} (parallel processing), \texttt{dplyr} and
+\texttt{ggplot2} (reporting), and \texttt{rmarkdown} plus
+\texttt{bookdown} for the manuscript build.
+
+\textbf{Random-number generator.} The simulation driver
+follows\textsuperscript{\citeproc{ref-morris2019using}{17}} §4.1:
+\texttt{RNGkind} is pinned and \texttt{set.seed(20260411)} is called
+once at the start of the program. Per-replicate seeds derive from this
+master stream.
+
+\textbf{Data and code availability.} The simulation engine is at
+\texttt{analysis/scripts/sim\_site\_covariate.R}. Cached simulation
+outputs are at \texttt{analysis/data/}. The manuscript source,
+bibliography (\texttt{references.bib}), and SIM CSL file are at
+\texttt{analysis/report/}.
+
 \section{References}\label{references}
 
 \subsection{Morris et al.~(2019) ADEMP
@@ -631,52 +722,52 @@ in a subsequent revision.
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{0}{1}
-\bibitem[\citeproctext]{ref-Localio2001adjustments}
-\CSLLeftMargin{1. }%
-\CSLRightInline{Localio AR, Berlin JA, Ten Have TR, Kimmel SE.
-Adjustments for center in multicenter studies: An overview. \emph{Annals
-of Internal Medicine}. 2001;135(2):112-123.
-doi:\href{https://doi.org/10.7326/0003-4819-135-2-200107170-00012}{10.7326/0003-4819-135-2-200107170-00012}}
-
 \bibitem[\citeproctext]{ref-Kahan2013continuous}
-\CSLLeftMargin{2. }%
+\CSLLeftMargin{1. }%
 \CSLRightInline{Kahan BC, Morris TP. Analysis of multicentre trials with
 continuous outcomes: When and how should we account for centre effects?
 \emph{Statistics in Medicine}. 2013;32(7):1136-1149.
 doi:\href{https://doi.org/10.1002/sim.5667}{10.1002/sim.5667}}
 
-\bibitem[\citeproctext]{ref-ICHE9guideline}
+\bibitem[\citeproctext]{ref-edgarIncludingRandomCentre2021}
+\CSLLeftMargin{2. }%
+\CSLRightInline{Edgar K, Roberts I, Sharples L. Including random centre
+effects in design, analysis and presentation of multi-centre trials.
+\emph{Trials}. 2021;22(1):357.
+doi:\href{https://doi.org/10.1186/s13063-021-05266-w}{10.1186/s13063-021-05266-w}}
+
+\bibitem[\citeproctext]{ref-Localio2001adjustments}
 \CSLLeftMargin{3. }%
+\CSLRightInline{Localio AR, Berlin JA, Ten Have TR, Kimmel SE.
+Adjustments for center in multicenter studies: An overview. \emph{Annals
+of Internal Medicine}. 2001;135(2):112-123.
+doi:\href{https://doi.org/10.7326/0003-4819-135-2-200107170-00012}{10.7326/0003-4819-135-2-200107170-00012}}
+
+\bibitem[\citeproctext]{ref-ICHE9guideline}
+\CSLLeftMargin{4. }%
 \CSLRightInline{International Council for Harmonisation. \emph{{ICH}
 {E9}: Statistical Principles for Clinical Trials}. ICH; 1998.
 \url{https://database.ich.org/sites/default/files/E9_Guideline.pdf}}
 
 \bibitem[\citeproctext]{ref-FDA2023covariate}
-\CSLLeftMargin{4. }%
+\CSLLeftMargin{5. }%
 \CSLRightInline{U.S. Food and Drug Administration. \emph{Adjusting for
 Covariates in Randomized Clinical Trials for Drugs and Biological
 Products: Guidance for Industry}. FDA; 2023.
 \url{https://www.fda.gov/media/148910/download}}
 
 \bibitem[\citeproctext]{ref-EMA2015covariate}
-\CSLLeftMargin{5. }%
+\CSLLeftMargin{6. }%
 \CSLRightInline{European Medicines Agency. \emph{Guideline on Adjustment
 for Baseline Covariates in Clinical Trials}. EMA; 2015.
 \url{https://www.ema.europa.eu/en/documents/scientific-guideline/guideline-adjustment-baseline-covariates-clinical-trials_en.pdf}}
 
 \bibitem[\citeproctext]{ref-Kahan2014rewards}
-\CSLLeftMargin{6. }%
+\CSLLeftMargin{7. }%
 \CSLRightInline{Kahan BC, Jairath V, Doré CJ, Morris TP. The risks and
 rewards of covariate adjustment in randomized trials: An assessment of
 12 outcomes from 8 studies. \emph{Trials}. 2014;15:139.
 doi:\href{https://doi.org/10.1186/1745-6215-15-139}{10.1186/1745-6215-15-139}}
-
-\bibitem[\citeproctext]{ref-edgarIncludingRandomCentre2021}
-\CSLLeftMargin{7. }%
-\CSLRightInline{Edgar K, Roberts I, Sharples L. Including random centre
-effects in design, analysis and presentation of multi-centre trials.
-\emph{Trials}. 2021;22(1):357.
-doi:\href{https://doi.org/10.1186/s13063-021-05266-w}{10.1186/s13063-021-05266-w}}
 
 \bibitem[\citeproctext]{ref-kahanImproperAnalysisTrials2012}
 \CSLLeftMargin{8. }%
@@ -747,6 +838,11 @@ doi:\href{https://doi.org/10.1016/j.jclinepi.2015.04.010}{10.1016/j.jclinepi.201
 studies to evaluate statistical methods. \emph{Statistics in Medicine}.
 2019;38(11):2074-2102.
 doi:\href{https://doi.org/10.1002/sim.8086}{10.1002/sim.8086}}
+
+\bibitem[\citeproctext]{ref-R-lme4}
+\CSLLeftMargin{18. }%
+\CSLRightInline{Bates D, Maechler M, Bolker B, Walker S. \emph{Lme4:
+Linear Mixed-Effects Models Using Eigen and S4}.; 2024.}
 
 \end{CSLReferences}
 

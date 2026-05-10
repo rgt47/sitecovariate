@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.22)  20 APR 2026 10:46
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.22)  8 MAY 2026 11:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1551,44 +1551,40 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) (./report.toc
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 7.665pt on input line 2.
+(Font)              scaled to size 7.665pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.475pt on input line 2.
+(Font)              scaled to size 5.475pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 10.95099pt on input line 2.
+(Font)              scaled to size 10.95099pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 7.66568pt on input line 2.
+(Font)              scaled to size 7.66568pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 5.4755pt on input line 2.
+(Font)              scaled to size 5.4755pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 10.94882pt on input line 2.
+(Font)              scaled to size 10.94882pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 7.66417pt on input line 2.
+(Font)              scaled to size 7.66417pt on input line 3.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 5.47441pt on input line 2.
+(Font)              scaled to size 5.47441pt on input line 3.
 )
 \tf@toc=\write5
 \openout5 = `report.toc'.
 
 [1
 
-] [2] [3]
-
-LaTeX Warning: Citation `ref-R-lme4' on page 4 undefined on input line 352.
-
-[4]
+] [2] [3] [4] [5]
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 9.0pt on input line 402.
+(Font)              scaled to size 9.0pt on input line 457.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(1)/m/n' will be
-(Font)              scaled to size 5.0pt on input line 402.
+(Font)              scaled to size 5.0pt on input line 457.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 9.00082pt on input line 402.
+(Font)              scaled to size 9.00082pt on input line 457.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(2)/m/n' will be
-(Font)              scaled to size 5.00046pt on input line 402.
+(Font)              scaled to size 5.00046pt on input line 457.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 8.99904pt on input line 402.
+(Font)              scaled to size 8.99904pt on input line 457.
 LaTeX Font Info:    Font shape `TU/latinmodern-math.otf(3)/m/n' will be
-(Font)              scaled to size 4.99947pt on input line 402.
+(Font)              scaled to size 4.99947pt on input line 457.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
@@ -1604,39 +1600,43 @@ File: report_files/report_files/figure-latex/fig-power-1.pdf Graphic file (type
 File: report_files/report_files/figure-latex/fig-coverage-1.pdf Graphic file (t
 ype pdf)
 <use report_files/report_files/figure-latex/fig-coverage-1.pdf>
-[5] [6] [7] [8]
-Overfull \hbox (34.4362pt too wide) in paragraph at lines 608--612
+[6] [7] [8] [9]
+Overfull \hbox (101.92691pt too wide) in paragraph at lines 688--693
+[]\TU/lmr/bx/n/10.95 Data and code availability. \TU/lmr/m/n/10.95 The simulati
+on engine is at \TU/lmtt/m/n/10.95 analysis/scripts/sim_site_covariate.R\TU/lmr
+/m/n/10.95 .
+ []
+
+
+Overfull \hbox (34.4362pt too wide) in paragraph at lines 699--703
 \TU/lmr/m/n/10.95 Morris, White, and Crowther$[]$. The full audit is at \TU/lmt
 t/m/n/10.95 docs/morris-audit-2026-04-17.md\TU/lmr/m/n/10.95 . 
  []
 
-[9]
-Underfull \hbox (badness 1226) in paragraph at lines 721--721
+[10] [11]
+Underfull \hbox (badness 1226) in paragraph at lines 812--812
 \TU/lmr/m/n/10.95 ment effects and patient subsets. \TU/lmr/m/it/10.95 Biometri
 cs\TU/lmr/m/n/10.95 . 1985;41(2):361-372.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 728--728
+Underfull \hbox (badness 10000) in paragraph at lines 819--819
 \TU/lmr/m/n/10.95 1139. doi:[]10.1002/(SICI)1097-0258(20000430)19:8<1115::AID-
  []
 
-[10] [11] (./report.aux)
+[12] (./report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-LaTeX Warning: There were undefined references.
-
  ) 
 Here is how much of TeX's memory you used:
- 34003 strings out of 468168
- 662289 string characters out of 5432815
- 1319773 words of memory out of 5000000
- 62133 multiletter control sequences out of 15000+600000
- 636220 words of font info for 108 fonts, out of 8000000 for 9000
+ 34012 strings out of 468168
+ 662334 string characters out of 5432815
+ 1321056 words of memory out of 5000000
+ 62144 multiletter control sequences out of 15000+600000
+ 636212 words of font info for 107 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  99i,9n,114p,1003b,507s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on report.pdf (11 pages).
+Output written on report.pdf (12 pages).
