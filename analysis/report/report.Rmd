@@ -24,6 +24,8 @@ header-includes:
   - \usepackage{lipsum, xargs}
   - \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
   - \usepackage[export]{adjustbox}
+  - \usepackage{setspace}
+  - \setstretch{1.1}
 ---
 
 ```{r setup, include=FALSE}
