@@ -241,9 +241,9 @@ The existing simulation studies have focused primarily on
 cross-sectional outcomes. In many clinical trials, however,
 outcomes are measured longitudinally over multiple visits,
 introducing an additional layer of within-subject correlation that
-interacts with the between-site structure. The present study uses
-Monte Carlo simulation to compare four analysis strategies for a
-longitudinal outcome in a multicenter trial: (1) ignoring site
+interacts with the between-site structure. We use Monte Carlo
+simulation to compare four analysis strategies for a longitudinal
+outcome in a multicenter trial: (1) ignoring site
 entirely, (2) including site as a fixed effect, (3) including
 site as a random effect, and (4) including a site-by-treatment
 interaction term. We evaluate these strategies under equal and
