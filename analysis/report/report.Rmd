@@ -105,13 +105,13 @@ variables enter the analysis as covariates.
 
 # Introduction
 
-A key question in the analysis of data from multi-site randomized
-clinical trials is whether and how to include site (or centre) as
-a covariate in the analysis model. The question is not merely
-academic: the choice of whether to adjust for site, and whether
-to treat it as a fixed or random effect, can influence estimates
-of treatment effect, standard errors, confidence interval width,
-and statistical power
+We address a key question in the analysis of data from multi-site
+randomized clinical trials: whether and how to include site (or
+centre) as a covariate in the analysis model. The question is
+not merely academic. The choice of whether to adjust for site,
+and whether to treat it as a fixed or random effect, can
+influence estimates of treatment effect, standard errors,
+confidence interval width, and statistical power
 [@Localio2001adjustments; @Kahan2013continuous].
 
 Multicenter trials are conducted to increase enrollment rates
@@ -408,8 +408,8 @@ pow_by_model <- all_summ |>
   dplyr::summarise(pow_mean = mean(power, na.rm = TRUE))
 ```
 
-Across four scenarios crossing balanced vs imbalanced
-site sizes with and without true
+We find that across four scenarios crossing balanced vs
+imbalanced site sizes with and without true
 treatment-by-site heterogeneity, all four analysis models
 produced absolute bias below
 `r sprintf('%.3f', abs(bias_max$bias))` (worst case:
@@ -693,7 +693,8 @@ cov_dat |>
 
 The simulation results illuminate several practical
 considerations for the inclusion of site in the analysis of
-multicenter trials with longitudinal outcomes.
+multicenter trials with longitudinal outcomes, which we shall
+now take up in turn.
 
 First, consistent with the findings of @Kahan2013continuous
 and @edgarIncludingRandomCentre2021, including site as a
@@ -732,14 +733,14 @@ whereas the fixed-effects model treats each site independently
 and can perform poorly when some sites contribute sparse data
 [@Localio2001adjustments; @Agresti2000strategies].
 
-Several limitations should be noted. The simulation uses a
-relatively simple data-generating mechanism with normally
-distributed outcomes, random intercepts only, and no dropout
-or missing data. Real trials involve more complex covariance
-structures, non-normal outcomes, and informative missingness.
-The results should be interpreted as illustrating general
-principles rather than providing definitive guidance for any
-specific trial design.
+Several limitations warrant acknowledgment. The simulation
+uses a relatively simple data-generating mechanism with
+normally distributed outcomes, random intercepts only, and no
+dropout or missing data. Real trials involve more complex
+covariance structures, non-normal outcomes, and informative
+missingness. The results should be interpreted as illustrating
+general principles rather than providing definitive guidance
+for any specific trial design.
 
 # Future research
 
@@ -830,20 +831,23 @@ bibliography (`references.bib`), and SIM CSL file are at
 
 ## Morris et al. (2019) ADEMP Compliance
 
-This simulation study was audited against the reporting standards
-proposed by Morris, White, and Crowther [-@morris2019using]. The full
-audit is at `docs/morris-audit-2026-04-17.md`.
+We audited this simulation study against the reporting
+standards proposed by Morris, White, and Crowther
+[-@morris2019using]. The full audit is recorded at
+`docs/morris-audit-2026-04-17.md`.
 
 **Verdict:** Partially compliant.
 
 **Key gaps identified:**
 
-- `set.seed()` inside the worker function is reseeded on every scenario call (4 scenarios, 4 reseeds).
-- No Monte Carlo SE on any metric (`summarise_sim()` at lines 166-184).
-- `n_sim = 1000` hardcoded without a target-MCSE derivation.
+- `set.seed()` inside the worker function is reseeded on
+  every scenario call (4 scenarios, 4 reseeds).
+- No Monte Carlo SE on any metric (`summarise_sim()`).
+- `n_sim = 1000` is hardcoded without a target-MCSE
+  derivation.
 
-A remediation plan is documented in the audit file and will be
-executed in a subsequent revision.
+A remediation plan is recorded in the audit file and will
+be taken up in a subsequent revision.
 
 
 ```{r footer, echo=FALSE, results='asis'}
