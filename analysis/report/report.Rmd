@@ -1111,6 +1111,9 @@ sim_pkg_versions <- vapply(
 sim_pkg_str <- paste(
   sprintf("`%s` (%s)", sim_pkgs, sim_pkg_versions), collapse = ", "
 )
+report_pkg_str <- paste(
+  sprintf("`%s`", report_pkgs), collapse = ", "
+)
 ```
 
 This section is generated from `sessionInfo()` and the `sim_seed`
@@ -1124,7 +1127,7 @@ for all data generation and `r sim_pkg_str` for model fitting and
 summarisation; it does not call `MASS::mvrnorm()` and there is no
 parallel backend (no `furrr` or `future` usage anywhere in the
 repository). Report generation and tables additionally use
-`r paste(sprintf("\`%s\`", report_pkgs), collapse = ", ")`, plus
+`r report_pkg_str`, plus
 `rmarkdown`/`bookdown` for the manuscript build. The project's
 `renv.lock` and `Dockerfile` pin R 4.6.0 for the containerized build
 (`rocker/verse:4.6.0`); the R version actually used for this
