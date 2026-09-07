@@ -145,13 +145,13 @@ the reduced-replicate scenarios.
 
 # Introduction
 
-We address a key question in the analysis of data from multi-site
-randomized clinical trials: whether and how to include site (or
-centre) as a covariate in the analysis model. The question is
-not merely academic. The choice of whether to adjust for site,
-and whether to treat it as a fixed or random effect, can
-influence estimates of treatment effect, standard errors,
-confidence interval width, and statistical power
+We begin with a key question in the analysis of data from
+multi-site randomized clinical trials: whether, and how, to
+include site (or centre) as a covariate in the analysis model.
+The question is not merely academic. The choice of whether to
+adjust for site, and whether to treat it as a fixed or random
+effect, can influence estimates of treatment effect, standard
+errors, confidence interval width, and statistical power
 [@Localio2001adjustments; @Kahan2013continuous].
 
 Multicenter trials are conducted to increase enrollment rates
@@ -159,11 +159,11 @@ and improve the generalizability of findings across clinical
 settings. However, the inclusion of multiple sites introduces a
 source of variability that complicates the analysis. Patients
 within a site tend to be more similar to one another than to
-patients at other sites, owing to shared clinical practices,
-patient populations, and local standards of care. This
-within-site correlation, or clustering, violates the independence
-assumption underlying many standard statistical methods
-[@Localio2001adjustments].
+patients at other sites. This tends to follow from shared
+clinical practices, patient populations, and local standards of
+care. This within-site correlation, or clustering, violates the
+independence assumption underlying many standard statistical
+methods [@Localio2001adjustments].
 
 ## Regulatory context
 
@@ -175,18 +175,18 @@ later in the analysis' [@ICHE9guideline]. When randomization is
 stratified by site, this implies that site should appear in the
 analysis model. The United States Food and Drug Administration
 (FDA) 2023 guidance on covariate adjustment reinforces this
-position, recommending that stratification variables be included
+position. It recommends that stratification variables be included
 in the primary analysis model [@FDA2023covariate]. The European
 Medicines Agency (EMA) similarly advises that stratification
-factors be incorporated unless stratification was performed for
+factors be incorporated, unless stratification was performed for
 purely administrative reasons [@EMA2015covariate].
 
 ## The case for adjusting for site
 
 The primary statistical argument for including site in the
-analysis model is that it can reduce residual variance, thereby
-increasing the precision of treatment effect estimates and
-improving power [@Kahan2014rewards]. When outcome rates or levels
+analysis model is that it can reduce residual variance. This, in
+turn, increases the precision of treatment effect estimates and
+improves power [@Kahan2014rewards]. When outcome rates or levels
 differ substantially across sites, whether because of differences
 in patient populations, diagnostic practices, or supportive care,
 failing to account for this heterogeneity leaves variance
@@ -196,43 +196,42 @@ intervals for the treatment effect [@Kahan2013continuous;
 @edgarIncludingRandomCentre2021].
 
 A further argument concerns the validity of inference when
-randomization has been stratified by site. @kahanImproperAnalysisTrials2012
-demonstrated that stratified randomization induces correlation
-between treatment groups within strata. If the analysis ignores
-this structure, standard errors are biased upward, confidence
-intervals are too wide, and power is reduced.
-@linschotenIncorrectlyAnalysingStratified2022 provided a
-clinical example in which failure to adjust for stratification
+randomization has been stratified by site.
+@kahanImproperAnalysisTrials2012 demonstrated that stratified
+randomization induces correlation between treatment groups within
+strata. If the analysis ignores this structure, standard errors
+are biased upward, confidence intervals are too wide, and power
+is reduced. @linschotenIncorrectlyAnalysingStratified2022 provided
+a clinical example in which failure to adjust for stratification
 factors led to a false negative conclusion.
 
-Site adjustment is a special case of the broader,
-well-established literature on covariate adjustment for
-precision in randomized trials, but is distinct from it in one
-respect relevant to design: site is typically a stratification
-factor set by the allocation scheme itself
-[@Pocock1975allocation], rather than a prognostic baseline
-covariate chosen for its association with outcome. The general
-case for adjusting for prognostic baseline covariates,
-including via ANCOVA, is made on model-robust grounds by
-@wangAnalysisCovarianceRandomized2019 and treated at length in
-the classical trials-design literature [@Fleiss1986design];
-@wangUtilitiesPitfallsStratified2022 review the utilities and
-pitfalls of stratified analysis more generally. This paper
-addresses the narrower, site-specific question of how (fixed,
-random, or interaction) rather than the more general question of
-whether to adjust for a prognostic baseline covariate, which is
-outside its scope.
+Site adjustment is a special case of the broader, well-established
+literature on covariate adjustment for precision in randomized
+trials. It is distinct from that broader literature in one respect
+relevant to design: site is typically a stratification factor set
+by the allocation scheme itself [@Pocock1975allocation], rather
+than a prognostic baseline covariate chosen for its association
+with outcome. The general case for adjusting for prognostic
+baseline covariates, including via ANCOVA, is made on model-robust
+grounds by @wangAnalysisCovarianceRandomized2019 and is treated at
+length in the classical trials-design literature
+[@Fleiss1986design]. @wangUtilitiesPitfallsStratified2022 review
+the utilities and pitfalls of stratified analysis more generally.
+This paper addresses the narrower, site-specific question of how
+(fixed, random, or interaction) rather than the more general
+question of whether to adjust for a prognostic baseline covariate,
+which we regard as outside its scope.
 
 ## Fixed versus random effects
 
 A central debate concerns whether site should enter the model as
 a fixed or random effect. Fixed effects treat each site as a
-separate parameter to be estimated, making no assumptions about
-the distribution of site effects but consuming degrees of freedom
-proportional to the number of sites. Random effects assume site
-effects are drawn from a normal distribution, estimating only the
-variance of that distribution and thereby requiring fewer
-parameters [@Falissard1996center].
+separate parameter to be estimated. This approach makes no
+assumptions about the distribution of site effects, but it
+consumes degrees of freedom proportional to the number of sites.
+Random effects assume site effects are drawn from a normal
+distribution, estimating only the variance of that distribution
+and thereby requiring fewer parameters [@Falissard1996center].
 
 @Kahan2013continuous conducted a simulation study comparing fixed
 and random centre effects for continuous outcomes across 378
@@ -246,23 +245,23 @@ equations (GEEs), and Mantel-Haenszel methods.
 
 The practical relevance of this comparison is underscored by
 @Kahan2015fewevents, who reviewed 206 multicenter trials in four
-major medical journals and found that the median number of events
-per centre-treatment arm combination was just 3, with 50% of
-trials having fewer than 3 events per centre-treatment
-combination. Fixed-effects models require substantial data per
-site to perform well; in the majority of real trials, this
-condition is not met [@kimAnalysisMulticenterClinical2020].
+major medical journals. The median number of events per
+centre-treatment arm combination was just 3, and 50% of trials
+had fewer than 3 events per centre-treatment combination.
+Fixed-effects models require substantial data per site to perform
+well, and in the majority of real trials this condition is not
+met [@kimAnalysisMulticenterClinical2020].
 
 ## Treatment-by-site interaction
 
-If site effects on outcome vary, a natural question is whether
-the treatment effect itself varies across sites, that is, whether
-a treatment-by-site interaction exists. A qualitative interaction,
+If site effects on outcome vary, a natural question follows:
+does the treatment effect itself vary across sites? That is, does
+a treatment-by-site interaction exist? A qualitative interaction,
 where the direction of the treatment effect reverses at some
-sites, has major clinical implications: it suggests that the
+sites, has major clinical implications. It suggests that the
 treatment may be harmful for some patient populations
 [@GailSimon1985qualitative]. However, tests for treatment-by-site
-interaction are typically underpowered because individual sites
+interaction are typically underpowered, because individual sites
 rarely enroll enough patients to estimate site-specific treatment
 effects precisely [@edgarIncludingRandomCentre2021].
 
@@ -281,44 +280,45 @@ sites. Some sites may contribute hundreds of patients while
 others contribute fewer than ten. This heterogeneity in site
 size interacts with the choice of analytic method.
 Fixed-effects models can lead to patient exclusion when sites
-have observations in only one treatment arm (a common occurrence
-with small sites), whereas random-effects models borrow strength
-across sites and avoid this problem
+have observations in only one treatment arm, a common occurrence
+with small sites. Random-effects models, on the other hand,
+borrow strength across sites and avoid this problem
 [@Kahan2015fewevents; @kimAnalysisMulticenterClinical2020].
 @Localio2001adjustments provided an overview of the analytic
 challenges introduced by clustering, confounding, and effect
-modification in multicenter studies, emphasizing that the
-correlation of outcomes within sites must be addressed to obtain
-valid inference.
+modification in multicenter studies. That review emphasized that
+the correlation of outcomes within sites must be addressed to
+obtain valid inference.
 
 ## Present study
 
 Despite the extensive methodological literature, uncertainty
-persists about when and how to adjust for site in practice.
-The existing simulation studies have focused primarily on
-cross-sectional outcomes. In many clinical trials, however,
-outcomes are measured longitudinally over multiple visits,
-introducing an additional layer of within-subject correlation that
-interacts with the between-site structure. We use Monte Carlo
-simulation to compare four analysis strategies for a longitudinal
-outcome in a multicenter trial: (1) ignoring site
-entirely, (2) including site as a fixed effect, (3) including
-site as a random effect, and (4) including a site-by-treatment
+persists about when and how to adjust for site in practice. It
+appears that the existing simulation studies have focused
+primarily on cross-sectional outcomes. In many clinical trials,
+however, outcomes are measured longitudinally over multiple
+visits. This introduces an additional layer of within-subject
+correlation that interacts with the between-site structure. We
+use Monte Carlo simulation to compare four analysis strategies for
+a longitudinal outcome in a multicenter trial: (1) ignoring site
+entirely, (2) including site as a fixed effect, (3) including site
+as a random effect, and (4) including a site-by-treatment
 interaction term. We evaluate these strategies under equal and
 unequal, moderate site sizes, with and without true
-treatment-by-site interaction; under a null treatment effect, to
-assess empirical type I error; and under a sparse-site regime
-(4-8 patients per site), the condition under which the
-cross-sectional literature reports the clearest fixed-versus-random
-advantage. We assess bias, power or type I error, coverage, and a
-converged/singular/nonconverged/error convergence classification.
+treatment-by-site interaction. We also evaluate them under a null
+treatment effect, to assess empirical type I error, and under a
+sparse-site regime (4-8 patients per site), the condition under
+which the cross-sectional literature reports the clearest
+fixed-versus-random advantage. We assess bias, power or type I
+error, coverage, and a converged/singular/nonconverged/error
+convergence classification.
 
 # Methods
 
 ## ADEMP structure
 
-Following Morris, White, and Crowther [-@morris2019using], the
-simulation is reported under the ADEMP framework.
+We follow Morris, White, and Crowther [-@morris2019using] and
+report the simulation under the ADEMP framework.
 
 - **Aims.** Compare four strategies for incorporating site information
   in multicenter trial analyses (no site adjustment, fixed site
@@ -339,9 +339,9 @@ simulation is reported under the ADEMP framework.
 ## Data generating model
 
 We simulate data from a two-arm parallel-group multicenter trial
-with a continuous longitudinal outcome measured at $T = 4$
-equally spaced time points. The model for the outcome $Y_{ijk}$
-of subject $j$ at site $i$ and time $k$ is:
+with a continuous longitudinal outcome measured at $T = 4$ equally
+spaced time points. In symbols, the model for the outcome
+$Y_{ijk}$ of subject $j$ at site $i$ and time $k$ is:
 
 $$
 Y_{ijk} = \alpha_i + (\beta + \gamma_i) \cdot \text{Trt}_{ij}
@@ -358,8 +358,8 @@ residual error.
 
 ## Simulation scenarios
 
-We examine four primary scenarios defined by crossing two
-factors:
+We examine four primary scenarios, defined by crossing two
+factors.
 
 \begin{itemize}
   \item \textbf{Site size}: equal (20 patients per site) versus
@@ -376,24 +376,24 @@ Within each site, subjects are randomized 1:1 to treatment and
 control. For the unequal-size condition, the vector of per-site
 sample sizes is drawn once per scenario call and reused across
 all $n_{\mathrm{sim}}$ replications of that scenario, rather than
-resampled at every replication; "unequal site sizes" therefore
-describes one fixed, arbitrary site-size allocation, analogous to
-treating total sample size as a fixed design factor, not a
-distribution over designs that varies by replicate.
+resampled at every replication. We note that 'unequal site sizes'
+therefore describes one fixed, arbitrary site-size allocation. It
+is analogous to treating total sample size as a fixed design
+factor, not a distribution over designs that varies by replicate.
 
 Two additional scenarios probe conditions the primary four do not
-test (Results, Scenarios 5-6): a null-effect scenario
-($\beta = 0$, equal site sizes, no interaction) to assess
-empirical type I error, and a sparse-site scenario (4-8 patients
-per site, drawn once per scenario as above) to test the regime in
-which the cross-sectional fixed-versus-random literature reports
-the clearest advantage for random effects
-[@Kahan2013continuous; @Kahan2015fewevents].
+test (Results, Scenarios 5-6): a null-effect scenario ($\beta =
+0$, equal site sizes, no interaction) to assess empirical type I
+error, and a sparse-site scenario (4-8 patients per site, drawn
+once per scenario as above) to test the regime in which the
+cross-sectional fixed-versus-random literature reports the
+clearest advantage for random effects [@Kahan2013continuous;
+@Kahan2015fewevents].
 
 ## Analysis models
 
-For each simulated dataset, we fit four linear mixed models
-using the \texttt{lme4} package [@R-lme4]:
+For each simulated dataset, we fit four linear mixed models using
+the \texttt{lme4} package [@R-lme4].
 
 \begin{enumerate}
   \item \textbf{No site}: \texttt{y \~{} trt + time + (1|subj)}
@@ -407,7 +407,8 @@ using the \texttt{lme4} package [@R-lme4]:
 
 ## Performance metrics
 
-For each model across 1,000 replications, we compute:
+For each model across 1,000 replications, we compute the
+following.
 
 - **Bias**: mean estimated treatment effect minus true value
   ($\beta = 0.30$)
@@ -421,9 +422,9 @@ For each model across 1,000 replications, we compute:
 - **Convergence rate**: proportion of replications classified as
   fully converged, out of four mutually exclusive outcome
   categories per fit (converged, singular, nonconverged, error).
-  `lme4` signals optimizer failure-to-converge and singular-fit
-  conditions as warnings rather than errors, so this
-  classification captures `lme4` warnings via
+  We note that `lme4` signals optimizer failure-to-converge and
+  singular-fit conditions as warnings rather than errors. This
+  classification therefore captures `lme4` warnings via
   `withCallingHandlers()` and checks `lme4::isSingular()` and
   `fit@optinfo$conv$opt`, rather than only catching R errors.
 
@@ -501,21 +502,19 @@ pow_by_model <- all_summ |>
   dplyr::summarise(pow_mean = mean(power, na.rm = TRUE))
 ```
 
-We find that across four scenarios crossing balanced vs
-imbalanced site sizes with and without true
-treatment-by-site heterogeneity, all four analysis models
-produced absolute bias below
-`r sprintf('%.3f', abs(bias_max$bias))` (worst case:
+We find that across four scenarios crossing balanced versus
+imbalanced site sizes, with and without true treatment-by-site
+heterogeneity, all four analysis models produced absolute bias
+below `r sprintf('%.3f', abs(bias_max$bias))` (worst case:
 `r bias_max$model` under "`r bias_max$scenario`", MCSE
 `r sprintf('%.3f', bias_max$mcse_bias)`). Coverage of 95\%
 confidence intervals across all combinations fell in
 [`r sprintf('%.3f', cov_range[1])`,
-`r sprintf('%.3f', cov_range[2])`]. Mean power by model
-(averaged across scenarios) was:
-`r paste(sprintf('%s = %.2f', pow_by_model$model,
-pow_by_model$pow_mean), collapse = ', ')`. All performance
-measures are reported with their Morris Table 6
-Monte Carlo SEs in the per-scenario tables below.
+`r sprintf('%.3f', cov_range[2])`]. Mean power by model, averaged
+across scenarios, was: `r paste(sprintf('%s = %.2f',
+pow_by_model$model, pow_by_model$pow_mean), collapse = ', ')`. All
+performance measures are reported with their Morris Table 6 Monte
+Carlo SEs in the per-scenario tables below.
 
 ## Scenario 1: Equal site sizes, no interaction
 
@@ -656,13 +655,13 @@ tab4 |>
 ## Scenario 5: Null treatment effect (Type I error)
 
 The Abstract states that the choice of analysis model has
-"consequences for power, type I error." Scenarios 1-4 all set
-$\beta = 0.30$, so the reported "power" columns above are
-true-positive rates; no scenario tests the null. This
-section adds a null-effect scenario ($\beta = 0$, equal site
-sizes, no treatment-by-site interaction, $\sigma^2_s = 0.50$)
-so that empirical Type I error can be reported directly
-(whitepaper issue 2.1).
+"consequences for power, type I error." We note that Scenarios
+1-4 all set $\beta = 0.30$, so the reported "power" columns above
+are true-positive rates; no scenario tests the null. This section
+adds a null-effect scenario ($\beta = 0$, equal site sizes, no
+treatment-by-site interaction, $\sigma^2_s = 0.50$) so that
+empirical Type I error can be reported directly (whitepaper issue
+2.1).
 
 ```{r run-sim-null, cache=TRUE}
 # TODO(remediation): this scenario was run at a reduced replicate
@@ -715,25 +714,25 @@ tab_null |>
 ```
 
 At `r n_sim_null` replications, empirical Type I error is close
-to, but for the site-adjusted models nominally somewhat below,
-the target 0.05 (Table 5); the "No site" model's Type I error is
-below the site-adjusted models', consistent with the
-site-adjusted models targeting a narrower error stratum once site
-variance is absorbed rather than left in the residual. Because
-this run uses a reduced replicate count, the reported MCSEs are
-correspondingly wider than in Scenarios 1-4; the full
-$n_{\mathrm{sim}} = 1000$ run noted in the TODO above should be
-substituted before this becomes a headline claim.
+to the target 0.05 (Table 5), although for the site-adjusted
+models it runs somewhat below that target. The "No site" model's
+Type I error is below the site-adjusted models', which is
+consistent with the site-adjusted models targeting a narrower
+error stratum once site variance is absorbed rather than left in
+the residual. Because this run uses a reduced replicate count,
+the reported MCSEs are correspondingly wider than in Scenarios
+1-4. The full $n_{\mathrm{sim}} = 1000$ run noted in the TODO
+above should be substituted before this becomes a headline claim.
 
 ## Scenario 6: Sparse site sizes
 
 The Introduction motivates the fixed-versus-random comparison by
 citing evidence that random effects show their clearest advantage
-when sites contribute few patients (@Kahan2015fewevents: a
-median of 3 events per centre-treatment arm across 206 published
-trials). Scenarios 1-4 use $n \approx 20$ patients per site,
-which does not test this regime (whitepaper issue 2.5). This
-section adds a sparse-site scenario with 4-8 patients per site.
+when sites contribute few patients (@Kahan2015fewevents: a median
+of 3 events per centre-treatment arm across 206 published trials).
+Scenarios 1-4 use $n \approx 20$ patients per site, which does not
+test this regime (whitepaper issue 2.5). This section adds a
+sparse-site scenario with 4-8 patients per site.
 
 ```{r run-sim-sparse, cache=TRUE}
 # TODO(remediation): as with the null scenario above, this run used
@@ -785,20 +784,20 @@ tab_sparse |>
   )
 ```
 
-At `r n_sim_sparse` replications, the largest effect in Table 6
-is between "No site" and the three site-adjusted models (power
+At `r n_sim_sparse` replications, the largest effect in Table 6 is
+between "No site" and the three site-adjusted models (power
 `r sprintf('%.3f', tab_sparse$power[tab_sparse$model == "no_site"])`
 versus approximately
-`r sprintf('%.3f', mean(tab_sparse$power[tab_sparse$model != "no_site"]))`),
-not between the fixed- and random-effects models specifically,
-whose power estimates
+`r sprintf('%.3f', mean(tab_sparse$power[tab_sparse$model != "no_site"]))`).
+It is not between the fixed- and random-effects models
+specifically, whose power estimates
 (`r sprintf('%.3f', tab_sparse$power[tab_sparse$model == "site_fixed"])`
-vs
+versus
 `r sprintf('%.3f', tab_sparse$power[tab_sparse$model == "site_random"])`)
 differ by less than one Monte Carlo SE. Even in this sparse-site
 regime, this simulation does not reproduce a fixed-versus-random
 advantage of the kind reported by @Kahan2013continuous for
-cross-sectional outcomes; see the Discussion for interpretation.
+cross-sectional outcomes. See the Discussion for interpretation.
 
 ## Comparison of bias and power across scenarios
 
@@ -949,91 +948,90 @@ cov_dat |>
 
 The simulation results illuminate several practical
 considerations for the inclusion of site in the analysis of
-multicenter trials with longitudinal outcomes, which we shall
-now take up in turn.
+multicenter trials with longitudinal outcomes. We shall now take
+these up in turn.
 
 First, in the moderate, near-balanced site sizes used in
 Scenarios 1-4 ($n \approx 20$ patients per site), the fixed- and
-random-effects models are numerically almost indistinguishable:
+random-effects models are numerically almost indistinguishable.
 Tables 1-4 show the same model-based SE, power, and coverage for
 `site_fixed` and `site_random` to the displayed precision, and
 the Monte Carlo SEs reported alongside each estimate confirm that
 no cross-model gap in this simulation clears two MCSEs. This is
-the expected behaviour under near-orthogonal allocation: because
+the expected behavior under near-orthogonal allocation. Because
 treatment is assigned close to 1:1 within every site, the site
 design matrix is close to orthogonal to treatment, so the
 site-adjustment method has little effect on the treatment point
 estimate or its precision at this site size. We therefore do
-**not** find, in this simulation, a fixed-versus-random
-precision advantage of the kind reported by @Kahan2013continuous
-and @edgarIncludingRandomCentre2021 for the cross-sectional case;
-Scenario 6 (sparse sites, 4-8 patients per site, the regime
-those studies identify as the one in which the advantage should
-be clearest) likewise shows no distinguishable fixed-versus-random
-gap in this longitudinal setting, although this scenario was run
-at a reduced replicate count (see TODO in the Scenario 6 source
-chunk) and should be confirmed at $n_{\mathrm{sim}} = 1000$ before
-being treated as a settled null result. What the simulation does
-show consistently, across every scenario, is the much larger and
-well-supported effect of adjusting for site at all versus omitting
-it (see the "No site" versus site-adjusted comparison below), a
-result already well established by @Localio2001adjustments and
+**not** find, in this simulation, a fixed-versus-random precision
+advantage of the kind reported by @Kahan2013continuous and
+@edgarIncludingRandomCentre2021 for the cross-sectional case.
+Scenario 6 (sparse sites, 4-8 patients per site, the regime those
+studies identify as the one in which the advantage should be
+clearest) likewise shows no distinguishable fixed-versus-random
+gap in this longitudinal setting. We note, however, that this
+scenario was run at a reduced replicate count (see TODO in the
+Scenario 6 source chunk) and should be confirmed at
+$n_{\mathrm{sim}} = 1000$ before being treated as a settled null
+result. What the simulation does show consistently, across every
+scenario, is the much larger and well-supported effect of
+adjusting for site at all versus omitting it (see the "No site"
+versus site-adjusted comparison below). This is a result already
+well established by @Localio2001adjustments and
 @Kahan2013continuous rather than a novel finding of this study.
 
 Second, when no true treatment-by-site interaction exists,
 including an interaction term in the model expends degrees of
-freedom without benefit, leading to reduced power relative to
+freedom without benefit. This leads to reduced power relative to
 simpler models. This finding supports the common recommendation
-to include the interaction term only when there is a strong
-a priori reason to expect treatment effect heterogeneity
-across sites [@GailSimon1985qualitative;
-@Agresti2000strategies].
+to include the interaction term only when there is a strong a
+priori reason to expect treatment effect heterogeneity across
+sites [@GailSimon1985qualitative; @Agresti2000strategies].
 
-Third, the regulatory guidance from ICH E9, the FDA, and the
-EMA all converge on the recommendation that stratification
-variables should be included in the analysis model
-[@ICHE9guideline; @FDA2023covariate; @EMA2015covariate]. Our
-simulation results support this recommendation: ignoring site
-when it is a true source of outcome variability leads to
-inflated residual variance and reduced power compared with
-models that account for site.
+Third, the regulatory guidance from ICH E9, the FDA, and the EMA
+all converge on the recommendation that stratification variables
+should be included in the analysis model [@ICHE9guideline;
+@FDA2023covariate; @EMA2015covariate]. Our simulation results
+support this recommendation. Ignoring site, when it is a true
+source of outcome variability, leads to inflated residual variance
+and reduced power compared with models that account for site.
 
 Fourth, the "unequal" site-size condition in Scenarios 2 and 4
 uses one arbitrary site-size allocation, drawn once per scenario
-and reused across all replications of that scenario (a fixed
-design factor, analogous to a fixed total sample size), rather
-than a distribution over designs resampled at each replication;
-this is a defensible ADEMP choice but is stated explicitly here
-so that "unequal site sizes" is not read as implying sizes vary
-by replicate.
+and reused across all replications of that scenario. This is a
+fixed design factor, analogous to a fixed total sample size,
+rather than a distribution over designs resampled at each
+replication. This is a defensible ADEMP choice, but we state it
+explicitly here so that "unequal site sizes" is not read as
+implying sizes vary by replicate.
 
-Fifth, Scenario 5 (Table 5) reports empirical Type I error under
-a null treatment effect, addressing the Abstract's reference to
+Fifth, Scenario 5 (Table 5) reports empirical Type I error under a
+null treatment effect, addressing the Abstract's reference to
 "consequences for ... type I error," which no scenario tested in
-the original design. At the reduced replicate count used for
-this confirmatory run ($n_{\mathrm{sim}} = 300$; see the TODO in
-the Scenario 5 source chunk for the full-scale command), Type I
-error for the site-adjusted models is in the vicinity of the
-nominal 0.05 level; the full $n_{\mathrm{sim}} = 1000$ run should
-be substituted before this is treated as a precise estimate.
+the original design. At the reduced replicate count used for this
+confirmatory run ($n_{\mathrm{sim}} = 300$; see the TODO in the
+Scenario 5 source chunk for the full-scale command), Type I error
+for the site-adjusted models is in the vicinity of the nominal
+0.05 level. The full $n_{\mathrm{sim}} = 1000$ run should be
+substituted before this is treated as a precise estimate.
 
-Several limitations warrant acknowledgment. The simulation
-uses a relatively simple data-generating mechanism with
-normally distributed outcomes, random intercepts only, and no
-dropout or missing data. Real trials involve more complex
+Several limitations warrant acknowledgment. Unfortunately, the
+simulation uses a relatively simple data-generating mechanism,
+with normally distributed outcomes, random intercepts only, and
+no dropout or missing data. Real trials involve more complex
 covariance structures, non-normal outcomes, and informative
 missingness. Scenarios 5 and 6 were run at a reduced replicate
-count under a separately seeded RNG stream rather than the single
-pinned stream used for Scenarios 1-4 (see the Reproducibility
-section); the exact commands to fold them into the main
-$n_{\mathrm{sim}} = 1000$ sequence are noted as TODOs in their
-respective source chunks. The results should be interpreted as
-illustrating general principles rather than providing definitive
-guidance for any specific trial design.
+count under a separately seeded RNG stream, rather than the
+single pinned stream used for Scenarios 1-4 (see the
+Reproducibility section). The exact commands to fold them into
+the main $n_{\mathrm{sim}} = 1000$ sequence are noted as TODOs in
+their respective source chunks. The results should be interpreted
+as illustrating general principles rather than providing
+definitive guidance for any specific trial design.
 
 # Future research
 
-Several directions merit further investigation:
+Several directions merit further investigation.
 
 1. **Non-normal outcomes.** Extending the simulation to binary
    and time-to-event endpoints would complement the present
@@ -1067,7 +1065,7 @@ Several directions merit further investigation:
    of analysis plans.
 
 6. **Bayesian approaches.** Bayesian hierarchical models offer
-   a natural framework for modelling site effects and
+   a natural framework for modeling site effects and
    treatment-by-site heterogeneity, with the additional
    advantage of incorporating prior information. Comparing
    frequentist and Bayesian approaches in the multicenter
@@ -1090,11 +1088,10 @@ This work received no specific funding.
 
 # Data availability statement
 
-The R simulation engine, driver scripts, and cached results
-that populate the manuscript's tables and figures are openly
-available in the `sitecovariate` project repository.
-Specific paths are listed in the Reproducibility section
-below.
+The R simulation engine, driver scripts, and cached results that
+populate the manuscript's tables and figures are openly available
+in the `sitecovariate` project repository. Specific paths are
+listed in the Reproducibility section below.
 
 # Reproducibility
 
@@ -1118,32 +1115,33 @@ report_pkg_str <- paste(
 
 This section is generated from `sessionInfo()` and the `sim_seed`
 variable set in the `sim-seed` chunk above, rather than hand-typed,
-so it cannot drift out of sync with the code (whitepaper issue 2.2).
+so that it cannot drift out of sync with the code (whitepaper
+issue 2.2).
 
 This manuscript was rendered with `r r_version_string`. The
 simulation pipeline (`analysis/scripts/sim_site_covariate.R`) is a
-plain serial `for` loop over replications, using base R's `rnorm()`
-for all data generation and `r sim_pkg_str` for model fitting and
-summarisation; it does not call `MASS::mvrnorm()` and there is no
-parallel backend (no `furrr` or `future` usage anywhere in the
-repository). Report generation and tables additionally use
-`r report_pkg_str`, plus
+plain serial `for` loop over replications. It uses base R's
+`rnorm()` for all data generation and `r sim_pkg_str` for model
+fitting and summarization. We note that it does not call
+`MASS::mvrnorm()`, and there is no parallel backend (no `furrr` or
+`future` usage anywhere in the repository). Report generation and
+tables additionally use `r report_pkg_str`, plus
 `rmarkdown`/`bookdown` for the manuscript build. The project's
-`renv.lock` and `Dockerfile` pin R 4.6.0 for the containerized build
-(`rocker/verse:4.6.0`); the R version actually used for this
-particular render is reported above and may differ from the pinned
-container version when rendered on the host outside Docker.
+`renv.lock` and `Dockerfile` pin R 4.6.0 for the containerized
+build (`rocker/verse:4.6.0`). The R version actually used for this
+particular render is reported above, and may differ from the
+pinned container version when rendered on the host outside Docker.
 
 **Random-number generator.** The simulation driver follows
-@morris2019using §4.1: `RNGkind("L'Ecuyer-CMRG")` is pinned and
-`set.seed(sim_seed)` is called once, at the single `sim-seed` chunk
-above, before any scenario runs (`sim_seed` = `r sim_seed`).
+@morris2019using §4.1: `RNGkind("L'Ecuyer-CMRG")` is pinned, and
+`set.seed(sim_seed)` is called once, at the single `sim-seed`
+chunk above, before any scenario runs (`sim_seed` = `r sim_seed`).
 `sim_site_covariate()` does not accept a `seed` argument and does
-not call `set.seed()` internally; all four scenarios consume state
+not call `set.seed()` internally. All four scenarios consume state
 from this one RNG stream in sequence, so differences between
 scenarios reflect the data-generating mechanism, not distinct RNG
 starting points. Per-replicate `.Random.seed` snapshots are stored
-as an attribute of each scenario's return value for diagnostic
+as an attribute of each scenario's return value, for diagnostic
 reproducibility of any individual replication.
 
 **Data and code availability.** The simulation engine is at
@@ -1154,17 +1152,16 @@ bibliography (`references.bib`), and CSL file are at
 
 # ADEMP compliance statement
 
-We audited this simulation study against the reporting
-standards proposed by Morris, White, and Crowther
-[-@morris2019using]. This section was previously nested under
-the "References" heading, where it did not belong (whitepaper
-issue 3.3); it is now its own top-level section. The audit was
-re-run against the current code as part of remediating
-`docs/pub_review_whitepaper_2026-08-16.md`; the corrected
-scorecard and verdict are recorded at
+We audited this simulation study against the reporting standards
+proposed by Morris, White, and Crowther [-@morris2019using]. This
+section was previously nested under the "References" heading,
+where it did not belong (whitepaper issue 3.3); it is now its own
+top-level section. The audit was re-run against the current code
+as part of remediating `docs/pub_review_whitepaper_2026-08-16.md`.
+The corrected scorecard and verdict are recorded at
 `docs/morris-audit-2026-08-16.md`, which supersedes the original
-`docs/morris-audit-2026-04-17.md` (left unmodified as a
-historical record).
+`docs/morris-audit-2026-04-17.md` (left unmodified as a historical
+record).
 
 **Verdict:** Substantially compliant (previously "Partially
 compliant").
