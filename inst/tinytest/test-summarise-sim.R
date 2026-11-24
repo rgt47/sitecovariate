@@ -85,3 +85,20 @@ expect_equal(
   summ_status$n_fit, 3,
   info = "n_fit counts fits that did not error (converged == TRUE), used as MCSE denominator"
 )
+
+# Model-SE to empirical-SE ratio and conditional coverage.
+expect_equal(
+  summ$se_ratio, mean(toy$se) / stats::sd(toy$estimate),
+  info = "se_ratio is mean model SE over empirical SE"
+)
+expect_equal(
+  summ$coverage_cond, summ$coverage,
+  info = "without cond_trt, conditional coverage equals coverage"
+)
+toy_cond <- toy
+toy_cond$cond_trt <- c(0.10, 0.20, 0.30, 0.40)
+summ_cond <- summarise_sim(toy_cond, true_trt = true_trt)
+expect_equal(
+  summ_cond$coverage_cond, 1,
+  info = "coverage against cond_trt counts each rep's own target"
+)

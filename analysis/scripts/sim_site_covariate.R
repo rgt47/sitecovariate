@@ -1,3 +1,26 @@
+#' Allocate subjects to arms within each site
+#'
+#' @param n_per_site Integer vector of site sizes.
+#' @param allocation "alternate" (deterministic 0,1,0,1,...; draws
+#'   no random numbers) or "block" (permuted blocks within site).
+#' @param block_size Even block size for "block".
+#' @return 0/1 vector of arm indicators, ordered by site.
+allocate_arms <- function(n_per_site, allocation = "alternate",
+                          block_size = 4) {
+  if (allocation == "alternate") {
+    return(unlist(lapply(n_per_site, function(n) {
+      rep(c(0, 1), length.out = n)
+    })))
+  }
+  unlist(lapply(n_per_site, function(n) {
+    n_blocks <- ceiling(n / block_size)
+    blocks <- unlist(lapply(seq_len(n_blocks), function(b) {
+      sample(rep(c(0, 1), each = block_size / 2))
+    }))
+    blocks[seq_len(n)]
+  }))
+}
+
 sim_site_covariate <- function(
     n_sim = 1000,
     n_sites = 20,
@@ -6,8 +29,12 @@ sim_site_covariate <- function(
     site_sd = 0.50,
     trt_site_sd = 0.0,
     n_time = 4,
-    resid_sd = 1.0
+    resid_sd = 1.0,
+    allocation = c("alternate", "block"),
+    block_size = 4
 ) {
+  allocation <- match.arg(allocation)
+  stopifnot(block_size %% 2 == 0, block_size >= 2)
 
   # Morris, White, and Crowther (2019) §4.1: the RNG seed is set ONCE
   # by the caller; this function does NOT call `set.seed()`. Per-rep
@@ -33,6 +60,8 @@ sim_site_covariate <- function(
     pmax(sizes, 4)
   }
   n_total <- sum(n_per_site)
+  model_names <- c("no_site", "site_fixed", "site_random",
+                   "site_slope", "site_x_trt")
 
   results <- vector("list", n_sim)
 
@@ -43,9 +72,18 @@ sim_site_covariate <- function(
     trt_by_site <- rnorm(n_sites, 0, trt_site_sd)
 
     site_vec <- rep(seq_len(n_sites), times = n_per_site)
-    trt_subj <- unlist(lapply(n_per_site, function(n) {
-      rep(c(0, 1), length.out = n)
-    }))
+    # "alternate" draws no random numbers, so it leaves the RNG stream
+    # exactly as in earlier versions; it gives exact within-site
+    # balance for even site sizes. "block" uses permuted blocks within
+    # site, so a site whose size is not a multiple of `block_size` can
+    # be imbalanced. With every site of size >= 4 and block_size = 4,
+    # every site still has both arms.
+    trt_subj <- allocate_arms(n_per_site, allocation, block_size)
+    # Conditional (finite-site) treatment effect: the size-weighted
+    # mean of the realized site-specific effects. It differs from the
+    # marginal effect `true_trt` only when trt_site_sd > 0.
+    cond_trt <- true_trt +
+      sum(n_per_site * trt_by_site) / n_total
 
     site_for_subj <- rep(site_vec, each = n_time)
     subj_id <- rep(seq_len(n_total), each = n_time)
@@ -110,6 +148,9 @@ sim_site_covariate <- function(
     fit_random <- fit_lmer_safely(
       y ~ trt + time + (1 | site) + (1 | subj), dat
     )
+    fit_slope <- fit_lmer_safely(
+      y ~ trt + time + (1 + trt | site) + (1 | subj), dat
+    )
     fit_interact <- fit_lmer_safely(
       y ~ trt * site + time + (1 | subj), dat
     )
@@ -132,7 +173,9 @@ sim_site_covariate <- function(
 
       if (label == "site_x_trt") {
         trt_idx <- grep("trt1", names(fe))
-        if (length(trt_idx) == 0) {
+        # A dropped (rank-deficient) interaction column would misalign
+        # the weights below, so such a fit yields no estimate.
+        if (length(trt_idx) != nlevels(dat$site)) {
           return(data.frame(
             model = label, estimate = NA, se = NA,
             pvalue = NA, converged = TRUE, status = status
@@ -199,21 +242,27 @@ sim_site_covariate <- function(
     row_none <- extract_trt(fit_none, "no_site")
     row_fixed <- extract_trt(fit_fixed, "site_fixed")
     row_random <- extract_trt(fit_random, "site_random")
+    row_slope <- extract_trt(fit_slope, "site_slope")
     row_interact <- extract_trt(fit_interact, "site_x_trt")
 
-    results[[s]] <- rbind(row_none, row_fixed,
-                          row_random, row_interact)
+    rows <- rbind(row_none, row_fixed, row_random,
+                  row_slope, row_interact)
+    stopifnot(identical(rows$model, model_names))
+    rows$cond_trt <- cond_trt
+    results[[s]] <- rows
   }
 
   out <- do.call(rbind, results)
-  out$sim <- rep(seq_len(n_sim), each = 4)
+  out$sim <- rep(seq_len(n_sim), each = length(model_names))
 
   attr(out, "params") <- list(
     n_sim = n_sim, n_sites = n_sites,
     site_size = site_size, true_trt = true_trt,
     site_sd = site_sd, trt_site_sd = trt_site_sd,
-    n_time = n_time, resid_sd = resid_sd
+    n_time = n_time, resid_sd = resid_sd,
+    allocation = allocation, block_size = block_size
   )
+  attr(out, "n_per_site") <- n_per_site
   attr(out, "rng_states") <- rng_states
 
   out
@@ -234,6 +283,13 @@ summarise_sim <- function(sim_results, true_trt = 0.30) {
   # (converged / singular / nonconverged / error), which captures
   # `lme4` warnings and `isSingular()` rather than only R errors
   # (whitepaper issue 2.6).
+  # When the engine supplies `cond_trt` (the realized size-weighted
+  # site-average effect), coverage is also scored against it. This
+  # separates the conditional (finite-site) target from the marginal
+  # target `true_trt`.
+  if (!"cond_trt" %in% names(sim_results)) {
+    sim_results$cond_trt <- true_trt
+  }
   if (!"status" %in% names(sim_results)) {
     sim_results$status <- ifelse(
       sim_results$converged, "converged", "error"
@@ -264,6 +320,7 @@ summarise_sim <- function(sim_results, true_trt = 0.30) {
           n_fit
       ),
       mean_model_se = mean(se, na.rm = TRUE),
+      se_ratio = mean_model_se / empirical_se,
       power = mean(pvalue < 0.05, na.rm = TRUE),
       mcse_power = sqrt(power * (1 - power) / n_fit),
       coverage = mean(
@@ -273,6 +330,14 @@ summarise_sim <- function(sim_results, true_trt = 0.30) {
       ),
       mcse_coverage = sqrt(
         coverage * (1 - coverage) / n_fit
+      ),
+      coverage_cond = mean(
+        (estimate - 1.96 * se <= cond_trt) &
+          (estimate + 1.96 * se >= cond_trt),
+        na.rm = TRUE
+      ),
+      mcse_coverage_cond = sqrt(
+        coverage_cond * (1 - coverage_cond) / n_fit
       ),
       .groups = "drop"
     )

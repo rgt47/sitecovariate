@@ -5,3 +5,5 @@
 | Staged PDF | Source | Version | Rendered |
 |---|---|---|---|
 | `report-2026-08-15-1300-41ea413-wip.pdf` | `~/prj/res/11-site-covariate-analysis/sitecovariate/analysis/report/report.Rmd` | `41ea413-wip` | 2026-08-15 13:00 PDT |
+| `report-2026-11-19-1254-d743ab2-wip.pdf` | `~/prj/res/11-site-covariate-analysis/sitecovariate/analysis/report/report.Rmd` | `d743ab2-wip` | 2026-11-19 12:54 PST |
+| `report-2026-11-23-1244-d743ab2-wip.pdf` | `~/prj/res/11-site-covariate-analysis/sitecovariate/analysis/report/report.Rmd` | `d743ab2-wip` | 2026-11-23 12:44 PST |
