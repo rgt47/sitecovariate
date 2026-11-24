@@ -9,3 +9,6 @@ renv/library/
 renv/staging/
 .zzcollab.log
 .make/
+
+# LaTeX and build logs
+*.log
